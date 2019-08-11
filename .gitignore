@@ -16,4 +16,4 @@ build/
 
 # Файлы сборки
 public/bundle.js
-public/bundle.map.js
+public/bundle.js.map
