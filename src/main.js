@@ -2,8 +2,9 @@ import {getMenu} from './components/menu.js';
 import {getInfo} from './components/info.js';
 import {getFilters} from './components/filters.js';
 import {getCardContainer} from './components/card-container.js';
-import {getCard} from './components/card.js';
+import {makeCard} from './components/card.js';
 import {getEditCard} from './components/edit-card.js';
+import {points} from './data.js';
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -25,4 +26,4 @@ const tripEventsListElement = tripEventsElement.querySelector(`.trip-events__lis
 
 render(tripEventsListElement, getEditCard(), `beforeend`);
 
-new Array(3).fill(``).forEach(() => render(tripEventsListElement, getCard(), `beforeend`));
+render(tripEventsListElement, points.map(makeCard).join(``), `beforeend`);

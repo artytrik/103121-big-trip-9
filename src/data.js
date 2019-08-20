@@ -1,4 +1,4 @@
-const tripPoint = {
+const getTripPoint = () => ({
   type: [
     `Bus`,
     `Check-in`,
@@ -35,7 +35,7 @@ const tripPoint = {
     `In rutrum ac purus sit amet tempus`
   ][Math.floor(Math.random() * 11)],
   date: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-  time: new date(),
+  time: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   price: Math.floor(Math.random() * 1000),
   additionalOptions: [
     {
@@ -58,5 +58,7 @@ const tripPoint = {
       price: `9`,
       flag: Boolean(Math.round(Math.random()))
     }
-  ]
-};
+  ][Math.floor(Math.random() * 4)]
+});
+
+export const points = new Array(3).fill(``).map(getTripPoint);
