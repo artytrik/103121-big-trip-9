@@ -61,4 +61,12 @@ const getTripPoint = () => ({
   ][Math.floor(Math.random() * 4)]
 });
 
+const menuTabs = [`table`, `stats`];
+
+const getMenu = (element) => ({
+  name: element
+});
+
 export const points = new Array(3).fill(``).map(getTripPoint);
+export const menuElements = menuTabs.map(getMenu);
+
