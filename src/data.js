@@ -72,7 +72,12 @@ const getFilters = (element) => ({
   name: element
 });
 
+const getInfo = (points) => ({
+  cities: points.map(({city}) => city)
+});
+
 export const points = new Array(3).fill(``).map(getTripPoint);
 export const menuElements = menuTabs.map(getMenu);
 export const filters = filterTabs.map(getFilters);
+export const infoElement = getInfo(points);
 

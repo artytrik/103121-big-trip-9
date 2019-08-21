@@ -1,5 +1,5 @@
 import {makeMenu} from './components/menu.js';
-import {getInfo} from './components/info.js';
+import {makeInfo} from './components/info.js';
 import {makeFilters} from './components/filters.js';
 import {getCardContainer} from './components/card-container.js';
 import {makeCard} from './components/card.js';
@@ -7,6 +7,7 @@ import {getEditCard} from './components/edit-card.js';
 import {points} from './data.js';
 import {menuElements} from './data.js';
 import {filters} from './data.js';
+import {infoElement} from './data.js';
 
 const render = (container, template, place) => {
   container.insertAdjacentHTML(place, template);
@@ -21,7 +22,7 @@ const tripEventsElement = pageMainElement.querySelector(`.trip-events`);
 
 render(tripControlsHeaderElements[0], makeMenu(menuElements), `afterend`);
 render(tripControlsHeaderElements[1], makeFilters(filters), `afterend`);
-render(tripInfoElement, getInfo(), `afterbegin`);
+render(tripInfoElement, makeInfo(infoElement), `afterbegin`);
 render(tripEventsElement, getCardContainer(), `afterbegin`);
 
 const tripEventsListElement = tripEventsElement.querySelector(`.trip-events__list`);
