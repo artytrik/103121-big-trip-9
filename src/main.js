@@ -19,6 +19,7 @@ const tripControlsElement = tripMainElement.querySelector(`.trip-controls`);
 const tripControlsHeaderElements = tripControlsElement.querySelectorAll(`h2`);
 const pageMainElement = document.querySelector(`.page-main`);
 const tripEventsElement = pageMainElement.querySelector(`.trip-events`);
+const tripInfoCostValue = tripInfoElement.querySelector(`.trip-info__cost-value`);
 
 render(tripControlsHeaderElements[0], makeMenu(menuElements), `afterend`);
 render(tripControlsHeaderElements[1], makeFilters(filters), `afterend`);
