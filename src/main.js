@@ -10,6 +10,7 @@ import {filters} from './data.js';
 import {infoElement} from './data.js';
 import {render} from './util.js';
 import {Position} from './util.js';
+import {EmptyResult} from './components/empty-result.js';
 
 const tripMainElement = document.querySelector(`.trip-main`);
 const tripInfoElement = tripMainElement.querySelector(`.trip-info`);
@@ -23,6 +24,7 @@ const cardContainer = new CardContainer();
 const info = new Info(infoElement);
 const filtersElement = new Filters(filters);
 const menuElement = new Menu(menuElements);
+const emptyResult = new EmptyResult();
 
 render(tripControlsHeaderElements[0], menuElement.getElement(), Position.AFTEREND);
 render(tripControlsHeaderElements[1], filtersElement.getElement(), Position.AFTEREND);
@@ -61,4 +63,8 @@ const renderPoints = (point) => {
   render(tripEventsListElement, tripPoint.getElement(), Position.BEFOREEND);
 }
 
-points.forEach((point) => renderPoints(point));
+if (points.length > 0) {
+  points.forEach((point) => renderPoints(point));
+} else {
+  render(tripEventsListElement, emptyResult.getElement(), Position.BEFOREEND);
+}
