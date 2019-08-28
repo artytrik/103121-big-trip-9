@@ -1,14 +1,6 @@
-import {createElement} from '../util.js';
+import {AbstractComponent} from './abstract-component.js';
 
-export class EmptyResult {
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
+export class EmptyResult extends AbstractComponent {
   getTemplate() {
     return `<p class="trip-events__msg">Click New Event to create your first point</p>`;
   }

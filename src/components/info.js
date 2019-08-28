@@ -1,17 +1,9 @@
-import {createElement} from '../util.js';
+import {AbstractComponent} from './abstract-component.js';
 
-export class Info {
+export class Info extends AbstractComponent {
   constructor({cities}) {
+    super();
     this._cities = cities;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
   }
 
   getTemplate() {
