@@ -1,21 +1,13 @@
-import {createElement} from '../util.js';
+import {AbstractComponent} from './abstract-component.js';
 
-export class Card {
+export class Card extends AbstractComponent {
   constructor({type, city, time, price, additionalOptions}) {
+    super();
     this._type = type;
     this._city = city;
     this._time = new Date(time);
     this._price = price;
     this._additionalOptions = additionalOptions;
-    this._element = null;
-  }
-
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
   }
 
   getTemplate() {
