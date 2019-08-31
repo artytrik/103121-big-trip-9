@@ -32,7 +32,7 @@ export class TripController {
     }
 
     this._sort.getElement()
-      .addEventListener('change', (evt) => this._onSortLinkClick(evt));
+      .addEventListener(`change`, (evt) => this._onSortLinkClick(evt));
   }
 
   _renderPoints(point) {
