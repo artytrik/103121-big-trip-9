@@ -63,6 +63,7 @@ const getTripPoint = () => ({
 
 const menuTabs = [`table`, `stats`];
 const filterTabs = [`everything`, `future`, `past`];
+const sortTabs = [`day`, `event`, `time`, `price`, `offers`];
 
 const getMenu = (element) => ({
   name: element
