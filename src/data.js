@@ -37,28 +37,13 @@ const getTripPoint = () => ({
   date: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   time: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   price: Math.floor(Math.random() * 1000),
-  additionalOptions: [
+  additionalOptions: new Set([
     {
       name: `Add luggage`,
       price: `10`,
-      flag: Boolean(Math.round(Math.random()))
+      flag: true
     },
-    {
-      name: `Switch to comfort class`,
-      price: `150`,
-      flag: Boolean(Math.round(Math.random()))
-    },
-    {
-      name: `Add meal`,
-      price: `2`,
-      flag: Boolean(Math.round(Math.random()))
-    },
-    {
-      name: `Choose seats`,
-      price: `9`,
-      flag: Boolean(Math.round(Math.random()))
-    }
-  ][Math.floor(Math.random() * 4)]
+  ])
 });
 
 const menuTabs = [`table`, `stats`];
@@ -81,4 +66,3 @@ export const points = new Array(3).fill(``).map(getTripPoint);
 export const menuElements = menuTabs.map(getMenu);
 export const filters = filterTabs.map(getFilters);
 export const infoElement = getInfo(points);
-

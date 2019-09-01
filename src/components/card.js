@@ -14,15 +14,18 @@ export class Card extends AbstractComponent {
     return `<li class="trip-events__item">
     <div class="event">
       <div class="event__type">
-        <img class="event__type-icon" width="42" height="42" src="img/icons/${this._type}.png" alt="Event type icon">
+        <img class="event__type-icon" width="42" height="42"
+        src="img/icons/${this._type}.png" alt="Event type icon">
       </div>
       <h3 class="event__title">${this._type} to ${this._city}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
-          <time class="event__start-time" datetime="2019-03-18T10:30">${this._time.toLocaleTimeString()}</time>
+          <time class="event__start-time" datetime="2019-03-18T10:30">
+          ${this._time.toLocaleTimeString()}</time>
           &mdash;
-          <time class="event__end-time" datetime="2019-03-18T11:00">${this._time.toLocaleTimeString()}</time>
+          <time class="event__end-time" datetime="2019-03-18T11:00">
+          ${this._time.toLocaleTimeString()}</time>
         </p>
         <p class="event__duration">1H 30M</p>
       </div>
@@ -33,11 +36,13 @@ export class Card extends AbstractComponent {
 
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        <li class="event__offer">
-          <span class="event__offer-title">${this._additionalOptions.name}</span>
+        ${Array.from(this._additionalOptions).map((addOption) =>
+          `<li class="event__offer">
+          <span class="event__offer-title">${addOption.name}</span>
           &plus;
-          &euro;&nbsp;<span class="event__offer-price">${this._additionalOptions.price}</span>
-        </li>
+          &euro;&nbsp;<span class="event__offer-price">${addOption.price}</span>
+        </li>`.trim()
+        ).join(``)}
       </ul>
 
       <button class="event__rollup-btn" type="button">

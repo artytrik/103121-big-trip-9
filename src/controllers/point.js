@@ -44,7 +44,7 @@ export class PointController {
           date: new Date(formData.get(`event-start-time`)),
           time: new Date(formData.get(`event-start-time`)),
           price: formData.get(`event-price`),
-          additionalOptions: formData.getAll(`.event__offer-selector`)
+          additionalOptions: new Set(formData.getAll(`event-offer-luggage`))
         };
 
 
