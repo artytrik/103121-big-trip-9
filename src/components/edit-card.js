@@ -192,4 +192,13 @@ export class EditCard extends AbstractComponent {
     </form>
   </li>`;
   }
+
+  _subscribeOnEvents() {
+		this.getElement()
+			.querySelector(`.event__type-input`).addEventListener(`keydown`, (evt) => {
+			if (evt.key === `Enter`) {
+				evt.preventDefault();
+			}
+    });
+  }
 }

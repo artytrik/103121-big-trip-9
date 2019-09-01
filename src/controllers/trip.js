@@ -1,12 +1,12 @@
-import {Card} from '../components/card.js';
-import {EditCard} from '../components/edit-card.js';
 import {TripDays} from "../components/trip-days";
 import {TripEvents} from "../components/trip-events";
 import {EmptyResult} from "../components/empty-result";
 import {render} from '../utils.js';
+import {unrender} from '../utils.js';
 import {Position} from '../utils.js';
 import {Day} from '../components/day.js';
 import {Sort} from '../components/sort.js';
+import {PointController} from './point.js';
 
 export class TripController {
   constructor(container, points) {
@@ -17,6 +17,10 @@ export class TripController {
     this._tripEvents = new TripEvents();
     this._emptyResult = new EmptyResult();
     this._sort = new Sort();
+
+    this._subscriptions = [];
+		this._onChangeView = this._onChangeView.bind(this);
+		this._onDataChange = this._onDataChange.bind(this);
   }
 
   init() {
@@ -35,32 +39,27 @@ export class TripController {
       .addEventListener(`change`, (evt) => this._onSortLinkClick(evt));
   }
 
+  _renderBoard(points) {
+    unrender(this._tripEvents.getElement());
+
+    this._tripEvents.removeElement();
+    render(this._day.getElement(), this._tripEvents.getElement(), Position.BEFOREEND);
+    points.forEach((point) => this._renderPoints(point));
+  }
+
   _renderPoints(point) {
-    const tripPoint = new Card(point);
-    const editTripPoint = new EditCard();
+    const pointController = new PointController(this._tripEvents, point, this._onDataChange, this._onChangeView);
+    this._subscriptions.push(pointController.setDefaultView.bind(pointController));
+  }
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        this._tripEvents.getElement().replaceChild(tripPoint.getElement(), editTripPoint.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      }
-    };
+  _onChangeView() {
+    this._subscriptions.forEach((it) => it());
+  }
 
-    tripPoint.getElement()
-      .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, () => {
-        this._tripEvents.getElement().replaceChild(editTripPoint.getElement(), tripPoint.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+  _onDataChange(newData, oldData) {
+    this._points[this._points.findIndex((it) => it === oldData)] = newData;
 
-    editTripPoint.getElement()
-      .querySelector(`.event__save-btn`)
-      .addEventListener(`click`, () => {
-        this._tripEvents.getElement().replaceChild(tripPoint.getElement(), editTripPoint.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
-
-    render(this._tripEvents.getElement(), tripPoint.getElement(), Position.BEFOREEND);
+    this._renderBoard(this._points);
   }
 
   _onSortLinkClick(evt) {
