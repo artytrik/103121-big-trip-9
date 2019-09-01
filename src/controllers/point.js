@@ -36,7 +36,13 @@ export class PointController {
         evt.preventDefault();
 
         const formData = new FormData(this._pointEdit.getElement().querySelector(`.event--edit`));
-
+        const additionalOptions = Array.from(this._pointEdit.getElement().querySelectorAll(`.event__offer-selector`)).map((addOption) => {
+          return ({
+            name: addOption.querySelector(`.event__offer-title`).textContent,
+            price: addOption.querySelector(`.event__offer-price`).textContent,
+            flag: addOption.querySelector(`.event__offer-checkbox`).checked
+          });
+        });
 
         const entry = {
           type: formData.get(`event-type`),
@@ -44,7 +50,7 @@ export class PointController {
           date: new Date(formData.get(`event-start-time`)),
           time: new Date(formData.get(`event-start-time`)),
           price: formData.get(`event-price`),
-          additionalOptions: new Set(formData.getAll(`event-offer-luggage`))
+          additionalOptions: additionalOptions
         };
 
 

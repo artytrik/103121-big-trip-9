@@ -7,19 +7,6 @@ export class EditCard extends AbstractComponent {
     this._time = new Date(time);
     this._price = price;
     this._additionalOptions = additionalOptions;
-
-    console.log((Array.from(this._additionalOptions).map((addOption) =>
-    (`<div class="event__offer-selector">
-      <input class="event__offer-checkbox  visually-hidden"
-      id="event-offer-luggage-1" type="checkbox"
-      name="event-offer-luggage" ${addOption.flag ? `checked` : ``}>
-        <label class="event__offer-label" for="event-offer-luggage-1">
-          <span class="event__offer-title">${addOption.name}</span>
-          &plus;
-          &euro;&nbsp;<span class="event__offer-price">${addOption.price}</span>
-        </label>
-      </div>
-    </div>`.trim()))).join(``));
   }
 
   getTemplate() {
@@ -180,18 +167,18 @@ export class EditCard extends AbstractComponent {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-          ${(Array.from(this._additionalOptions).map((addOption) =>
+          ${this._additionalOptions.map(({id, name, price, flag}) =>
             (`<div class="event__offer-selector">
               <input class="event__offer-checkbox  visually-hidden"
-              id="event-offer-luggage-1" type="checkbox"
-              name="event-offer-luggage" ${addOption.flag ? `checked` : ``}>
+              id="${id}-1" type="checkbox"
+              name="${id}" ${flag ? `checked` : ``}>
                 <label class="event__offer-label" for="event-offer-luggage-1">
-                  <span class="event__offer-title">${addOption.name}</span>
+                  <span class="event__offer-title">${name}</span>
                   &plus;
-                  &euro;&nbsp;<span class="event__offer-price">${addOption.price}</span>
+                  &euro;&nbsp;<span class="event__offer-price">${price}</span>
                 </label>
-              </div>
-            </div>`.trim()))).join(``)}
+              </div>`)).join(``)}
+            </div>
         </section>
 
         <section class="event__section  event__section--destination">

@@ -37,13 +37,32 @@ const getTripPoint = () => ({
   date: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   time: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   price: Math.floor(Math.random() * 1000),
-  additionalOptions: new Set([
+  additionalOptions: [
     {
+      id: `event-offer-luggage`,
       name: `Add luggage`,
       price: `10`,
       flag: true
     },
-  ])
+    {
+      id: `event-offer-comfort`,
+      name: `Switch to comfort class`,
+      price: `150`,
+      flag: true
+    },
+    {
+      id: `event-offer-meal`,
+      name: `Add meal`,
+      price: `2`,
+      flag: true
+    },
+    {
+      id: `event-offer-seats`,
+      name: `Choose seats`,
+      price: `9`,
+      flag: true
+    }
+  ]
 });
 
 const menuTabs = [`table`, `stats`];

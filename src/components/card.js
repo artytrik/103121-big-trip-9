@@ -36,13 +36,12 @@ export class Card extends AbstractComponent {
 
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${Array.from(this._additionalOptions).map((addOption) =>
+        ${this._additionalOptions.map(({name, price})  =>
           `<li class="event__offer">
-          <span class="event__offer-title">${addOption.name}</span>
+          <span class="event__offer-title">${name}</span>
           &plus;
-          &euro;&nbsp;<span class="event__offer-price">${addOption.price}</span>
-        </li>`.trim()
-        ).join(``)}
+          &euro;&nbsp;<span class="event__offer-price">${price}</span>
+        </li>`).join(``)}
       </ul>
 
       <button class="event__rollup-btn" type="button">
