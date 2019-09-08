@@ -172,7 +172,7 @@ export class EditCard extends AbstractComponent {
               <input class="event__offer-checkbox  visually-hidden"
               id="${id}-1" type="checkbox"
               name="${id}" ${flag ? `checked` : ``}>
-                <label class="event__offer-label" for="event-offer-luggage-1">
+                <label class="event__offer-label" for="${id}-1">
                   <span class="event__offer-title">${name}</span>
                   &plus;
                   &euro;&nbsp;<span class="event__offer-price">${price}</span>

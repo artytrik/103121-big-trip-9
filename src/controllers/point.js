@@ -38,6 +38,7 @@ export class PointController {
         const formData = new FormData(this._pointEdit.getElement().querySelector(`.event--edit`));
         const additionalOptions = Array.from(this._pointEdit.getElement().querySelectorAll(`.event__offer-selector`)).map((addOption) => {
           return ({
+            id: addOption.querySelector(`.event__offer-checkbox`).name,
             name: addOption.querySelector(`.event__offer-title`).textContent,
             price: addOption.querySelector(`.event__offer-price`).textContent,
             flag: addOption.querySelector(`.event__offer-checkbox`).checked
