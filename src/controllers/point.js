@@ -8,7 +8,7 @@ export class PointController {
     this._container = container;
     this._data = data;
     this._onChangeView = onChangeView;
-		this._onDataChange = onDataChange;
+    this._onDataChange = onDataChange;
     this._pointView = new Card(data);
     this._pointEdit = new EditCard(data);
 
@@ -51,7 +51,7 @@ export class PointController {
           date: new Date(formData.get(`event-start-time`)),
           time: new Date(formData.get(`event-start-time`)),
           price: formData.get(`event-price`),
-          additionalOptions: additionalOptions
+          additionalOptions
         };
 
 
@@ -64,8 +64,8 @@ export class PointController {
   }
 
   setDefaultView() {
-		if (this._container.getElement().contains(this._pointEdit.getElement())) {
-			this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
-		}
-	}
+    if (this._container.getElement().contains(this._pointEdit.getElement())) {
+      this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+    }
+  }
 }

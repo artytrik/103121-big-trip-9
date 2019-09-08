@@ -168,17 +168,17 @@ export class EditCard extends AbstractComponent {
 
           <div class="event__available-offers">
           ${this._additionalOptions.map(({id, name, price, flag}) =>
-            (`<div class="event__offer-selector">
-              <input class="event__offer-checkbox  visually-hidden"
-              id="${id}-1" type="checkbox"
-              name="${id}" ${flag ? `checked` : ``}>
-                <label class="event__offer-label" for="${id}-1">
-                  <span class="event__offer-title">${name}</span>
-                  &plus;
-                  &euro;&nbsp;<span class="event__offer-price">${price}</span>
-                </label>
-              </div>`)).join(``)}
-            </div>
+    (`<div class="event__offer-selector">
+      <input class="event__offer-checkbox  visually-hidden"
+      id="${id}-1" type="checkbox"
+      name="${id}" ${flag ? `checked` : ``}>
+        <label class="event__offer-label" for="${id}-1">
+          <span class="event__offer-title">${name}</span>
+          &plus;
+          &euro;&nbsp;<span class="event__offer-price">${price}</span>
+        </label>
+      </div>`)).join(``)}
+    </div>
         </section>
 
         <section class="event__section  event__section--destination">
@@ -205,11 +205,11 @@ export class EditCard extends AbstractComponent {
   }
 
   _subscribeOnEvents() {
-		this.getElement()
-			.querySelector(`.event__type-input`).addEventListener(`keydown`, (evt) => {
-			if (evt.key === `Enter`) {
-				evt.preventDefault();
-			}
-    });
+    this.getElement()
+      .querySelector(`.event__type-input`).addEventListener(`keydown`, (evt) => {
+        if (evt.key === `Enter`) {
+          evt.preventDefault();
+        }
+      });
   }
 }
