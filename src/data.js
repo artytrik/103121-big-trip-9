@@ -41,25 +41,25 @@ const getTripPoint = () => ({
     {
       id: `event-offer-luggage`,
       name: `Add luggage`,
-      price: `10`,
+      adPrice: `10`,
       flag: true
     },
     {
       id: `event-offer-comfort`,
       name: `Switch to comfort class`,
-      price: `150`,
+      adPrice: `150`,
       flag: true
     },
     {
       id: `event-offer-meal`,
       name: `Add meal`,
-      price: `2`,
+      adPrice: `2`,
       flag: true
     },
     {
       id: `event-offer-seats`,
       name: `Choose seats`,
-      price: `9`,
+      adPrice: `9`,
       flag: true
     }
   ]

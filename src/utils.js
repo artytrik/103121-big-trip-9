@@ -29,3 +29,11 @@ export const unrender = (element) => {
     element.remove();
   }
 };
+
+export const getTripCost = (points) => (
+  points.reduce((acc, {price, additionalOptions}) => {
+    const additionalOptionsCost = additionalOptions.reduce((accc, {adPrice, flag}) =>
+      (flag ? accc + Number(adPrice) : adPrice), 0);
+    return acc + Number(price) + additionalOptionsCost;
+  }, 0)
+);
