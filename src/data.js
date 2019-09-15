@@ -34,8 +34,8 @@ const getTripPoint = () => ({
     `Nunc fermentum tortor ac porta dapibus.`,
     `In rutrum ac purus sit amet tempus`
   ][Math.floor(Math.random() * 11)],
-  date: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
-  time: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
+  dateStart: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
+  dateFinish: Date.now() + 1 + Math.floor(Math.random() * 7) * 24 * 60 * 60 * 1000,
   price: Math.floor(Math.random() * 1000),
   additionalOptions: [
     {

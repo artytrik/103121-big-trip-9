@@ -1,11 +1,12 @@
 import {AbstractComponent} from './abstract-component.js';
 
 export class Card extends AbstractComponent {
-  constructor({type, city, time, price, additionalOptions}) {
+  constructor({type, city, dateStart, dateFinish, price, additionalOptions}) {
     super();
     this._type = type;
     this._city = city;
-    this._time = new Date(time);
+    this._dateStart = new Date(dateStart);
+    this._dateFinish = new Date(dateFinish);
     this._price = price;
     this._additionalOptions = additionalOptions;
   }
@@ -22,10 +23,10 @@ export class Card extends AbstractComponent {
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="2019-03-18T10:30">
-          ${this._time.toLocaleTimeString()}</time>
+          ${this._dateStart.toLocaleTimeString()}</time>
           &mdash;
           <time class="event__end-time" datetime="2019-03-18T11:00">
-          ${this._time.toLocaleTimeString()}</time>
+          ${this._dateFinish.toLocaleTimeString()}</time>
         </p>
         <p class="event__duration">1H 30M</p>
       </div>

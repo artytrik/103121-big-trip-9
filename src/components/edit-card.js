@@ -1,10 +1,11 @@
 import {AbstractComponent} from './abstract-component.js';
 
 export class EditCard extends AbstractComponent {
-  constructor({type, time, price, additionalOptions}) {
+  constructor({type, dateStart, dateFinish, price, additionalOptions}) {
     super();
     this._type = type;
-    this._time = new Date(time);
+    this._dateStart = new Date(dateStart);
+    this._dateFinish = new Date(dateFinish);
     this._price = price;
     this._additionalOptions = additionalOptions;
   }
@@ -123,14 +124,14 @@ export class EditCard extends AbstractComponent {
           </label>
           <input class="event__input  event__input--time"
           id="event-start-time-1" type="text" name="event-start-time"
-          value="${this._time.toLocaleTimeString()}">
+          value="${this._dateStart.toLocaleTimeString()}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
           <input class="event__input  event__input--time"
           id="event-end-time-1" type="text" name="event-end-time"
-          value="${this._time.toLocaleTimeString()}">
+          value="${this._dateFinish.toLocaleTimeString()}">
         </div>
 
         <div class="event__field-group  event__field-group--price">

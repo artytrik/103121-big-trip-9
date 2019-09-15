@@ -1,5 +1,6 @@
 import {TripDays} from "../components/trip-days";
 import {TripEvents} from "../components/trip-events";
+import {DayInfo} from '../components/day-info.js';
 import {EmptyResult} from "../components/empty-result";
 import {render} from '../utils.js';
 import {unrender} from '../utils.js';
@@ -13,8 +14,6 @@ export class TripController {
     this._container = container;
     this._points = points;
     this._tripDays = new TripDays();
-    this._day = new Day();
-    this._tripEvents = new TripEvents();
     this._emptyResult = new EmptyResult();
     this._sort = new Sort();
 
@@ -24,15 +23,13 @@ export class TripController {
   }
 
   init() {
-    render(this._tripDays.getElement(), this._day.getElement(), Position.BEFOREEND);
-    render(this._day.getElement(), this._tripEvents.getElement(), Position.BEFOREEND);
     render(this._container, this._sort.getElement(), Position.BEFOREEND);
     render(this._container, this._tripDays.getElement(), Position.BEFOREEND);
 
     if (this._points.length > 0) {
-      this._points.forEach((point) => this._renderPoints(point));
+      this._renderDays(this._points);
     } else {
-      render(this._tripEvents.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
+      render(this._container.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
     }
 
     this._sort.getElement()
@@ -47,9 +44,38 @@ export class TripController {
     points.forEach((point) => this._renderPoints(point));
   }
 
-  _renderPoints(point) {
-    const pointController = new PointController(this._tripEvents, point, this._onDataChange, this._onChangeView);
+  _renderPoints(container, point) {
+    const pointController = new PointController(container, point, this._onDataChange, this._onChangeView);
     this._subscriptions.push(pointController.setDefaultView.bind(pointController));
+  }
+
+  _renderDays(points) {
+    let pointsByDate = new Map();
+    points.forEach(point => {
+      if (!pointsByDate.has(point.dateStart)) {
+        pointsByDate.set(point.dateStart, []);
+      }
+      let arr = pointsByDate.get(point.dateStart);
+      arr.push(point);
+      pointsByDate.set(point.dateStart, arr);
+    });
+
+    let i = 1;
+
+    pointsByDate.forEach((points, date) => {
+      const objDate = new Date(date);
+      const day = new Day();
+      const dayInfo = new DayInfo(objDate, i);
+      const tripEvents = new TripEvents();
+
+      render(this._tripDays.getElement(), day.getElement(), Position.BEFOREEND);
+      render(day.getElement(), dayInfo.getElement(), Position.BEFOREEND);
+      render(day.getElement(), tripEvents.getElement(), Position.BEFOREEND);
+
+      points.forEach((point) => this._renderPoints(tripEvents, point));
+
+      i++;
+    });
   }
 
   _onChangeView() {
