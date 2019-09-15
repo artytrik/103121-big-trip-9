@@ -2,6 +2,9 @@ import {Position} from '../utils.js';
 import {Card} from '../components/card.js';
 import {EditCard} from '../components/edit-card.js';
 import {render} from '../utils.js';
+import flatpickr from 'flatpickr';
+import 'flatpickr/dist/flatpickr.min.css';
+import 'flatpickr/dist/themes/light.css';
 
 export class PointController {
   constructor(container, data, onDataChange, onChangeView) {
@@ -22,6 +25,12 @@ export class PointController {
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
+
+    flatpickr(this._pointEdit.getElement().querySelectorAll(`.event__input--time`), {
+      altInput: true,
+      allowInput: true,
+      defaultDate: this._data.dueDate,
+    });
 
     this._pointView.getElement()
       .querySelector(`.event__rollup-btn`)
