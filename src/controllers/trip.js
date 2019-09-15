@@ -37,11 +37,11 @@ export class TripController {
   }
 
   _renderBoard(points) {
-    unrender(this._tripEvents.getElement());
+    unrender(this._tripDays.getElement());
 
-    this._tripEvents.removeElement();
-    render(this._day.getElement(), this._tripEvents.getElement(), Position.BEFOREEND);
-    points.forEach((point) => this._renderPoints(point));
+    this._tripDays.removeElement();
+    render(this._container, this._tripDays.getElement(), Position.BEFOREEND);
+    this._renderDays(this._points);
   }
 
   _renderPoints(container, point) {
@@ -50,8 +50,9 @@ export class TripController {
   }
 
   _renderDays(points) {
+    const sortedPoints = points.slice().sort((a, b) => a.dateStart - b.dateStart);
     let pointsByDate = new Map();
-    points.forEach(point => {
+    sortedPoints.forEach(point => {
       if (!pointsByDate.has(point.dateStart)) {
         pointsByDate.set(point.dateStart, []);
       }
