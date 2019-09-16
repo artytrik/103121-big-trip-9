@@ -1,66 +1,92 @@
-import {Card} from '../components/card.js';
-import {EditCard} from '../components/edit-card.js';
 import {TripDays} from "../components/trip-days";
 import {TripEvents} from "../components/trip-events";
+import {DayInfo} from '../components/day-info.js';
 import {EmptyResult} from "../components/empty-result";
 import {render} from '../utils.js';
+import {unrender} from '../utils.js';
 import {Position} from '../utils.js';
 import {Day} from '../components/day.js';
 import {Sort} from '../components/sort.js';
+import {PointController} from './point.js';
 
 export class TripController {
   constructor(container, points) {
     this._container = container;
     this._points = points;
     this._tripDays = new TripDays();
-    this._day = new Day();
-    this._tripEvents = new TripEvents();
     this._emptyResult = new EmptyResult();
     this._sort = new Sort();
+
+    this._subscriptions = [];
+    this._onChangeView = this._onChangeView.bind(this);
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   init() {
-    render(this._tripDays.getElement(), this._day.getElement(), Position.BEFOREEND);
-    render(this._day.getElement(), this._tripEvents.getElement(), Position.BEFOREEND);
     render(this._container, this._sort.getElement(), Position.BEFOREEND);
     render(this._container, this._tripDays.getElement(), Position.BEFOREEND);
 
     if (this._points.length > 0) {
-      this._points.forEach((point) => this._renderPoints(point));
+      this._renderDays(this._points);
     } else {
-      render(this._tripEvents.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
+      render(this._container.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
     }
 
     this._sort.getElement()
       .addEventListener(`change`, (evt) => this._onSortLinkClick(evt));
   }
 
-  _renderPoints(point) {
-    const tripPoint = new Card(point);
-    const editTripPoint = new EditCard();
+  _renderBoard(points) {
+    unrender(this._tripDays.getElement());
 
-    const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        this._tripEvents.getElement().replaceChild(tripPoint.getElement(), editTripPoint.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
+    this._tripDays.removeElement();
+    render(this._container, this._tripDays.getElement(), Position.BEFOREEND);
+    this._renderDays(this._points);
+  }
+
+  _renderPoints(container, point) {
+    const pointController = new PointController(container, point, this._onDataChange, this._onChangeView);
+    this._subscriptions.push(pointController.setDefaultView.bind(pointController));
+  }
+
+  _renderDays(points) {
+    const sortedPoints = points.slice().sort((a, b) => a.dateStart - b.dateStart);
+    let pointsByDate = new Map();
+    sortedPoints.forEach(point => {
+      if (!pointsByDate.has(point.dateStart)) {
+        pointsByDate.set(point.dateStart, []);
       }
-    };
+      let arr = pointsByDate.get(point.dateStart);
+      arr.push(point);
+      pointsByDate.set(point.dateStart, arr);
+    });
 
-    tripPoint.getElement()
-      .querySelector(`.event__rollup-btn`)
-      .addEventListener(`click`, () => {
-        this._tripEvents.getElement().replaceChild(editTripPoint.getElement(), tripPoint.getElement());
-        document.addEventListener(`keydown`, onEscKeyDown);
-      });
+    let i = 1;
 
-    editTripPoint.getElement()
-      .querySelector(`.event__save-btn`)
-      .addEventListener(`click`, () => {
-        this._tripEvents.getElement().replaceChild(tripPoint.getElement(), editTripPoint.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
-      });
+    pointsByDate.forEach((points, date) => {
+      const objDate = new Date(date);
+      const day = new Day();
+      const dayInfo = new DayInfo(objDate, i);
+      const tripEvents = new TripEvents();
 
-    render(this._tripEvents.getElement(), tripPoint.getElement(), Position.BEFOREEND);
+      render(this._tripDays.getElement(), day.getElement(), Position.BEFOREEND);
+      render(day.getElement(), dayInfo.getElement(), Position.BEFOREEND);
+      render(day.getElement(), tripEvents.getElement(), Position.BEFOREEND);
+
+      points.forEach((point) => this._renderPoints(tripEvents, point));
+
+      i++;
+    });
+  }
+
+  _onChangeView() {
+    this._subscriptions.forEach((it) => it());
+  }
+
+  _onDataChange(newData, oldData) {
+    this._points[this._points.findIndex((it) => it === oldData)] = newData;
+
+    this._renderBoard(this._points);
   }
 
   _onSortLinkClick(evt) {

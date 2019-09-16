@@ -8,6 +8,7 @@ import {render} from './utils.js';
 import {Position} from './utils.js';
 import {TripController} from './controllers/trip.js';
 import {points} from './data.js';
+import {getTripCost} from './utils.js';
 
 const tripMainElement = document.querySelector(`.trip-main`);
 const tripInfoElement = tripMainElement.querySelector(`.trip-info`);
@@ -27,6 +28,8 @@ render(tripControlsHeaderElements[1], filtersElement.getElement(), Position.AFTE
 render(tripInfoElement, info.getElement(), Position.AFTERBEGIN);
 
 tripController.init();
+
+tripInfoCostValue.textContent = getTripCost(points);
 
 
 
