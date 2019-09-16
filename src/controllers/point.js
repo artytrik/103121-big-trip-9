@@ -29,7 +29,7 @@ export class PointController {
     flatpickr(this._pointEdit.getElement().querySelectorAll(`.event__input--time`), {
       altInput: true,
       allowInput: true,
-      defaultDate: this._data.dueDate,
+      defaultDate: this._data.dateStart,
     });
 
     this._pointView.getElement()
@@ -45,7 +45,7 @@ export class PointController {
         evt.preventDefault();
 
         const formData = new FormData(this._pointEdit.getElement().querySelector(`.event--edit`));
-        const additionalOptions = Array.from(this._pointEdit.getElement()
+        const addOptions = Array.from(this._pointEdit.getElement()
             .querySelectorAll(`.event__offer-selector`)).map((addOption) => {
           return ({
             id: addOption.querySelector(`.event__offer-checkbox`).name,
@@ -58,12 +58,13 @@ export class PointController {
         const entry = {
           type: formData.get(`event-type`),
           city: formData.get(`event-destination`),
-          dateStart: new Date(formData.get(`event__start-time`)),
-          dateFinish: new Date(formData.get(`event__end-time`)),
+          dateStart: new Date(formData.get(`event-start-time`)),
+          dateFinish: new Date(formData.get(`event-end-time`)),
           price: formData.get(`event-price`),
-          additionalOptions
+          additionalOptions: addOptions
         };
 
+        console.log(entry);
 
         this._onDataChange(entry, this._data);
 

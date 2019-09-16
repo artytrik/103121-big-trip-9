@@ -37,7 +37,7 @@ export class Card extends AbstractComponent {
 
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${this._additionalOptions.map(({name, adPrice}) =>
+        ${this._additionalOptions.filter(({flag}) => flag).map(({name, adPrice}) =>
     `<li class="event__offer">
       <span class="event__offer-title">${name}</span>
       &plus;
