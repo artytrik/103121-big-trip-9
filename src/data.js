@@ -65,13 +65,8 @@ const getTripPoint = () => ({
   ]
 });
 
-const menuTabs = [`table`, `stats`];
 const filterTabs = [`everything`, `future`, `past`];
 const sortTabs = [`day`, `event`, `time`, `price`, `offers`];
-
-const getMenu = (element) => ({
-  name: element
-});
 
 const getFilters = (element) => ({
   name: element
@@ -82,6 +77,5 @@ const getInfo = (points) => ({
 });
 
 export const points = new Array(3).fill(``).map(getTripPoint);
-export const menuElements = menuTabs.map(getMenu);
 export const filters = filterTabs.map(getFilters);
 export const infoElement = getInfo(points);
