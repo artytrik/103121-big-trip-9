@@ -36,6 +36,14 @@ export class TripController {
       .addEventListener(`change`, (evt) => this._onSortLinkClick(evt));
   }
 
+  hide() {
+    this._container.classList.add(`visually-hidden`);
+  }
+
+  show() {
+    this._container.classList.remove(`visually-hidden`);
+  }
+
   _renderBoard() {
     unrender(this._tripDays.getElement());
 
