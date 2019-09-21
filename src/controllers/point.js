@@ -2,6 +2,7 @@ import {Position} from '../utils.js';
 import {Card} from '../components/card.js';
 import {EditCard} from '../components/edit-card.js';
 import {render} from '../utils.js';
+import moment from "moment";
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
@@ -26,10 +27,20 @@ export class PointController {
       }
     };
 
-    flatpickr(this._pointEdit.getElement().querySelectorAll(`.event__input--time`), {
+    flatpickr(this._pointEdit.getElement().querySelector(`#event-start-time-1`), {
       altInput: true,
       allowInput: true,
-      defaultDate: this._data.dateStart,
+      defaultDate: moment(this._data.dateStart).format(`DD/MM/YY HH:mm`),
+      dateFormat: `d/m/y H:i`,
+      enableTime: true
+    });
+
+    flatpickr(this._pointEdit.getElement().querySelector(`#event-end-time-1`), {
+      altInput: true,
+      allowInput: true,
+      defaultDate: moment(this._data.dateFinish).format(`DD/MM/YY HH:mm`),
+      dateFormat: `d/m/y H:i`,
+      enableTime: true
     });
 
     this._pointView.getElement()
@@ -58,13 +69,11 @@ export class PointController {
         const entry = {
           type: formData.get(`event-type`),
           city: formData.get(`event-destination`),
-          dateStart: new Date(formData.get(`event-start-time`)),
-          dateFinish: new Date(formData.get(`event-end-time`)),
+          dateStart: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
+          dateFinish: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
           price: formData.get(`event-price`),
           additionalOptions: addOptions
         };
-
-        console.log(entry);
 
         this._onDataChange(entry, this._data);
 
