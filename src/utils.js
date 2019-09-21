@@ -4,6 +4,11 @@ export const Position = {
   AFTEREND: `afterend`
 };
 
+export const Mode = {
+  ADDING: `adding`,
+  DEFAULT: `default`
+};
+
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
   newElement.innerHTML = template;

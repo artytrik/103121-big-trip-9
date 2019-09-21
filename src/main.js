@@ -18,6 +18,7 @@ const pageMainElement = document.querySelector(`.page-main`);
 const pageBodyContainer = pageMainElement.querySelector(`.page-body__container`);
 const tripEventsElement = pageMainElement.querySelector(`.trip-events`);
 const tripInfoCostValue = tripInfoElement.querySelector(`.trip-info__cost-value`);
+const eventAddButton = tripMainElement.querySelector(`.trip-main__event-add-btn`);
 
 const info = new Info(infoElement);
 const filtersElement = new Filters(filters);
@@ -52,6 +53,12 @@ menuElement.getElement().addEventListener(`click`, (evt) => {
       statistics.getElement().classList.remove(`visually-hidden`);
       break;
   }
+});
+
+eventAddButton.addEventListener(`click`, (evt) => {
+  evt.preventDefault();
+
+  tripController.createPoint();
 });
 
 tripInfoCostValue.textContent = getTripCost(points);

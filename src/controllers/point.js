@@ -6,9 +6,10 @@ import moment from "moment";
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
+import {Mode} from '../utils.js';
 
 export class PointController {
-  constructor(container, data, onDataChange, onChangeView) {
+  constructor(container, data, mode, onDataChange, onChangeView) {
     this._container = container;
     this._data = data;
     this._onChangeView = onChangeView;
@@ -16,13 +17,27 @@ export class PointController {
     this._pointView = new Card(data);
     this._pointEdit = new EditCard(data);
 
-    this.init();
+    this.init(mode);
   }
 
-  init() {
+  init(mode) {
+    let renderPosition = Position.BEFOREEND;
+    let currentView = this._pointView;
+
+    if (mode === Mode.ADDING) {
+      renderPosition = Position.AFTERBEGIN;
+      currentView = this._pointEdit;
+    }
+
     const onEscKeyDown = (evt) => {
       if (evt.key === `Escape` || evt.key === `Esc`) {
-        this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+        if (mode === Mode.DEFAULT) {
+          if (this._container.contains(this._pointEdit.getElement())) {
+            this._container.replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+          }
+        } else if (mode === Mode.ADDING) {
+          this._container.removeChild(currentView.getElement());
+        }
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -51,6 +66,16 @@ export class PointController {
       });
 
     this._pointEdit.getElement()
+      .querySelector(`.event--edit`)
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+        this._onChangeView();
+        console.log(this._container);
+        this._container.getElement().replaceChild(this._pointView.getElement(),
+          this._pointEdit.getElement());
+      });
+
+    this._pointEdit.getElement()
       .querySelector(`.event__save-btn`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
@@ -75,12 +100,17 @@ export class PointController {
           additionalOptions: addOptions
         };
 
-        this._onDataChange(entry, this._data);
+        this._onDataChange(entry, mode === Mode.DEFAULT ? this._data : null);
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
-    render(this._container.getElement(), this._pointView.getElement(), Position.BEFOREEND);
+    this._pointEdit.getElement().querySelector(`.event__reset-btn`)
+      .addEventListener(`click`, () => {
+        this._onDataChange(null, this._data);
+      });
+
+    render(this._container.getElement(), currentView.getElement(), renderPosition);
   }
 
   setDefaultView() {

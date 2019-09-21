@@ -8,6 +8,7 @@ import {Position} from '../utils.js';
 import {Day} from '../components/day.js';
 import {Sort} from '../components/sort.js';
 import {PointController} from './point.js';
+import {Mode as PointControllerMode} from '../utils.js';
 
 export class TripController {
   constructor(container, points) {
@@ -44,6 +45,22 @@ export class TripController {
     this._container.classList.remove(`visually-hidden`);
   }
 
+  createPoint() {
+    const defaultPoint = {
+      type: [`Bus`],
+      city: [],
+      photos: [],
+      description: ``,
+      dateStart: new Date(),
+      dateFinish: new Date(),
+      price: 0,
+      additionalOptions: []
+    };
+
+    const pointController = new PointController(this._tripDays,
+        defaultPoint, PointControllerMode.ADDING, this._onChangeView, this._onDataChange);
+  }
+
   _renderBoard() {
     unrender(this._tripDays.getElement());
 
@@ -53,7 +70,8 @@ export class TripController {
   }
 
   _renderPoints(container, point) {
-    const pointController = new PointController(container, point, this._onDataChange, this._onChangeView);
+    const pointController = new PointController(container,
+        point, PointControllerMode.DEFAULT, this._onDataChange, this._onChangeView);
     this._subscriptions.push(pointController.setDefaultView.bind(pointController));
   }
 
@@ -92,7 +110,13 @@ export class TripController {
   }
 
   _onDataChange(newData, oldData) {
-    this._points[this._points.findIndex((it) => it === oldData)] = newData;
+    const index = this._points.findIndex((it) => it === oldData);
+
+    if (newData === null) {
+      this._points = [...this._points.slice(0, index), ...this._points.slice(index + 1)];
+    } else {
+      this._points[index] = newData;
+    }
 
     this._renderBoard(this._points);
   }
