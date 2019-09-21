@@ -1,4 +1,5 @@
 import {AbstractComponent} from './abstract-component.js';
+import moment from "moment";
 
 export class EditCard extends AbstractComponent {
   constructor({type, dateStart, dateFinish, price, additionalOptions}) {
@@ -124,14 +125,14 @@ export class EditCard extends AbstractComponent {
           </label>
           <input class="event__input  event__input--time"
           id="event-start-time-1" type="text" name="event-start-time"
-          value="${this._dateStart.toLocaleTimeString()}">
+          value="${moment(this._dateStart).format(`DD/MM/YY HH:mm`)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
           <input class="event__input  event__input--time"
           id="event-end-time-1" type="text" name="event-end-time"
-          value="${this._dateFinish.toLocaleTimeString()}">
+          value="${moment(this._dateFinish).format(`DD/MM/YY HH:mm`)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
