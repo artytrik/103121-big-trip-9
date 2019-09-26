@@ -9,6 +9,7 @@ import {Day} from '../components/day.js';
 import {Sort} from '../components/sort.js';
 import {PointController} from './point.js';
 import {Mode as PointControllerMode} from '../utils.js';
+import moment from "moment";
 
 export class TripController {
   constructor(container, points) {
@@ -17,6 +18,7 @@ export class TripController {
     this._tripDays = new TripDays();
     this._emptyResult = new EmptyResult();
     this._sort = new Sort();
+    this._creatingPoint = null;
 
     this._subscriptions = [];
     this._onChangeView = this._onChangeView.bind(this);
@@ -33,8 +35,13 @@ export class TripController {
       render(this._container.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
     }
 
+
     this._sort.getElement()
       .addEventListener(`change`, (evt) => this._onSortLinkClick(evt));
+
+    const filterForm = document.querySelector(`.trip-filters`);
+    filterForm.addEventListener(`change`, (evt) => this._onFilterClick(evt));
+
   }
 
   hide() {
@@ -46,6 +53,10 @@ export class TripController {
   }
 
   createPoint() {
+    if (this._creatingPoint) {
+      return;
+    }
+
     const defaultPoint = {
       type: [`Bus`],
       city: [],
@@ -57,8 +68,8 @@ export class TripController {
       additionalOptions: []
     };
 
-    const pointController = new PointController(this._tripDays,
-        defaultPoint, PointControllerMode.ADDING, this._onChangeView, this._onDataChange);
+    this._creatingPoint = new PointController(this._tripDays,
+        defaultPoint, PointControllerMode.ADDING,  this._onDataChange, this._onChangeView,);
   }
 
   _renderBoard() {
@@ -112,8 +123,13 @@ export class TripController {
   _onDataChange(newData, oldData) {
     const index = this._points.findIndex((it) => it === oldData);
 
-    if (newData === null) {
+    if (newData === null && oldData === null) {
+      this._creatingPoint = null
+    } else if (newData === null) {
       this._points = [...this._points.slice(0, index), ...this._points.slice(index + 1)];
+    } else if (oldData === null) {
+      this._creatingPoint = null;
+      this._points = [newData, ...this._points];
     } else {
       this._points[index] = newData;
     }
@@ -124,19 +140,39 @@ export class TripController {
   _onSortLinkClick(evt) {
     evt.preventDefault();
 
-    this._tripEvents.getElement().innerHTML = ``;
+    this._tripDays.getElement().innerHTML = ``;
 
     switch (evt.target.dataset.sortType) {
       case `event`:
-        this._points.forEach((point) => this._renderPoints(point));
+        this._renderDays(this._points);
         break;
       case `time`:
-        const sortedByTime = this._points.slice().sort((a, b) => a.dueDate - b.dueDate);
-        sortedByTime.forEach((point) => this._renderPoints(point));
+        const sortedByTime = this._points.slice().sort((a, b) => a.dateStart - b.dateFinish);
+        this._renderDays(sortedByTime);
         break;
       case `price`:
         const sortedByPrice = this._points.slice().sort((a, b) => a.price - b.price);
-        sortedByPrice.forEach((point) => this._renderPoints(point));
+        this._renderDays(sortedByPrice);
+        break;
+    }
+  }
+
+  _onFilterClick(evt) {
+    evt.preventDefault();
+
+    this._tripDays.getElement().innerHTML = ``;
+
+    switch (evt.target.id) {
+      case `filter-everything`:
+        this._renderDays(this._points);
+        break;
+      case `filter-future`:
+        const filterFuturePoints = this._points.filter((point) => moment(point.dateStart).isAfter(new Date(Date.now())));
+        this._renderDays(filterFuturePoints);
+        break;
+      case `filter-past`:
+        const filterPastPoints = this._points.filter((point) => moment(point.dateFinish).isBefore(new Date(Date.now())));
+        this._renderDays(filterPastPoints);
         break;
     }
   }

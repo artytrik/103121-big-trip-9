@@ -1,7 +1,6 @@
 import {Menu} from './components/menu.js';
 import {Info} from './components/info.js';
 import {Filters} from './components/filters.js';
-import {filters} from './data.js';
 import {infoElement} from './data.js';
 import {render} from './utils.js';
 import {Position} from './utils.js';
@@ -21,7 +20,7 @@ const tripInfoCostValue = tripInfoElement.querySelector(`.trip-info__cost-value`
 const eventAddButton = tripMainElement.querySelector(`.trip-main__event-add-btn`);
 
 const info = new Info(infoElement);
-const filtersElement = new Filters(filters);
+const filtersElement = new Filters();
 const menuElement = new Menu();
 const tripController = new TripController(tripEventsElement, points);
 const statistics = new Statistics();
@@ -45,12 +44,12 @@ menuElement.getElement().addEventListener(`click`, (evt) => {
 
   switch (evt.target.id) {
     case `table-button`:
-      statistics.getElement().classList.add(`visually-hidden`);
+      statistics.hide();
       tripController.show();
       break;
     case `stats-button`:
       tripController.hide();
-      statistics.getElement().classList.remove(`visually-hidden`);
+      statistics.show(points);
       break;
   }
 });
