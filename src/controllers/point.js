@@ -70,9 +70,8 @@ export class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
         this._onChangeView();
-        console.log(this._container);
         this._container.getElement().replaceChild(this._pointView.getElement(),
-          this._pointEdit.getElement());
+            this._pointEdit.getElement());
       });
 
     this._pointEdit.getElement()

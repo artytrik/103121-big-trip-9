@@ -65,17 +65,10 @@ const getTripPoint = () => ({
   ]
 });
 
-const filterTabs = [`everything`, `future`, `past`];
-const sortTabs = [`day`, `event`, `time`, `price`, `offers`];
-
-const getFilters = (element) => ({
-  name: element
-});
 
 const getInfo = (points) => ({
   cities: points.map(({city}) => city)
 });
 
 export const points = new Array(3).fill(``).map(getTripPoint);
-export const filters = filterTabs.map(getFilters);
 export const infoElement = getInfo(points);

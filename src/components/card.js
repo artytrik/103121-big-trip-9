@@ -31,7 +31,7 @@ export class Card extends AbstractComponent {
             .format(`YYYY-MM-DD`)}T${moment(this._dateFinish).format(`HH:mm`)}">
           ${moment(this._dateFinish).format(`HH:mm`)}</time>
         </p>
-        <p class="event__duration">1H 30M</p>
+        <p class="event__duration">${moment(this._dateFinish - this._dateStart).format(`HH:mm`)}</p>
       </div>
 
       <p class="event__price">
