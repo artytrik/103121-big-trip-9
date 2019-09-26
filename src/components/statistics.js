@@ -40,7 +40,7 @@ class Statistics extends AbstractComponent {
     this._points = points;
 
     this._renderMoneyStat();
-    this._renderTransportStat()
+    this._renderTransportStat();
   }
 
   _renderStat(name, container, labels, data) {
@@ -61,15 +61,6 @@ class Statistics extends AbstractComponent {
             anchor: `end`,
             align: `start`,
             padding: 5,
-            /*formatter(value) {
-              if (name === `TRANSPORT`) {
-                return `${value}x`;
-              } else if (name === `TIME SPENT`) {
-                return `${value}H`;
-              }
-
-              return `€ ${value}`;
-            */
           }
         },
         title: {
@@ -129,18 +120,6 @@ class Statistics extends AbstractComponent {
     }, []);
 
     this._renderStat(`TRANSPORT`, this._transportCtx, transportLabels, transportData);
-  }
-
-  _renderTimeSpendStat() {
-    /*const timeSpendLabels = this._points.map(({type}) => type);
-    const timeSpendData = timeSpendLabels.reduce((acc, label) => {
-      const transportNumber = this._points.filter(({type}) => type === label).length;
-
-      acc.push(transportNumber);
-      return acc;
-    }, []);
-
-    this._renderStat(`TRANSPORT`, this._transportCtx, transportLabels, transportData);*/
   }
 }
 

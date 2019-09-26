@@ -69,7 +69,7 @@ export class TripController {
     };
 
     this._creatingPoint = new PointController(this._tripDays,
-        defaultPoint, PointControllerMode.ADDING,  this._onDataChange, this._onChangeView,);
+        defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView);
   }
 
   _renderBoard() {
@@ -124,7 +124,7 @@ export class TripController {
     const index = this._points.findIndex((it) => it === oldData);
 
     if (newData === null && oldData === null) {
-      this._creatingPoint = null
+      this._creatingPoint = null;
     } else if (newData === null) {
       this._points = [...this._points.slice(0, index), ...this._points.slice(index + 1)];
     } else if (oldData === null) {
