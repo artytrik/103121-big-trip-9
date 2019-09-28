@@ -12,13 +12,15 @@ import {Mode as PointControllerMode} from '../utils.js';
 import moment from "moment";
 
 export class TripController {
-  constructor(container, points) {
+  constructor(container, points, destinations, additionalOptions) {
     this._container = container;
     this._points = points;
     this._tripDays = new TripDays();
     this._emptyResult = new EmptyResult();
     this._sort = new Sort();
     this._creatingPoint = null;
+    this._destinations = destinations;
+    this._additionalOptions = additionalOptions;
 
     this._subscriptions = [];
     this._onChangeView = this._onChangeView.bind(this);
@@ -69,7 +71,7 @@ export class TripController {
     };
 
     this._creatingPoint = new PointController(this._tripDays,
-        defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView);
+        defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView, this._destinations);
   }
 
   _renderBoard() {
@@ -82,7 +84,7 @@ export class TripController {
 
   _renderPoints(container, point) {
     const pointController = new PointController(container,
-        point, PointControllerMode.DEFAULT, this._onDataChange, this._onChangeView);
+        point, PointControllerMode.DEFAULT, this._onDataChange, this._onChangeView, this._destinations);
     this._subscriptions.push(pointController.setDefaultView.bind(pointController));
   }
 

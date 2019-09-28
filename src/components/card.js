@@ -2,10 +2,10 @@ import {AbstractComponent} from './abstract-component.js';
 import moment from "moment";
 
 export class Card extends AbstractComponent {
-  constructor({type, city, dateStart, dateFinish, price, additionalOptions}) {
+  constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions}) {
     super();
     this._type = type;
-    this._city = city;
+    this._city = name;
     this._dateStart = new Date(dateStart);
     this._dateFinish = new Date(dateFinish);
     this._price = price;
@@ -40,11 +40,11 @@ export class Card extends AbstractComponent {
 
       <h4 class="visually-hidden">Offers:</h4>
       <ul class="event__selected-offers">
-        ${this._additionalOptions.filter(({flag}) => flag).map(({name, adPrice}) =>
+        ${this._additionalOptions.filter(({accepted}) => accepted).map(({title, price}) =>
     `<li class="event__offer">
-      <span class="event__offer-title">${name}</span>
+      <span class="event__offer-title">${title}</span>
       &plus;
-      &euro;&nbsp;<span class="event__offer-price">${adPrice}</span>
+      &euro;&nbsp;<span class="event__offer-price">${price}</span>
     </li>`).join(``)}
       </ul>
 

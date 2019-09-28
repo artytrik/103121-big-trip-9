@@ -2,13 +2,20 @@ import {AbstractComponent} from './abstract-component.js';
 import moment from "moment";
 
 export class EditCard extends AbstractComponent {
-  constructor({type, dateStart, dateFinish, price, additionalOptions}) {
+  constructor({type, destination: {name, description, pictures},
+      dateStart, dateFinish, price, additionalOptions, isFavourite}, destinations)
+  {
     super();
     this._type = type;
     this._dateStart = new Date(dateStart);
     this._dateFinish = new Date(dateFinish);
     this._price = price;
     this._additionalOptions = additionalOptions;
+    this._city = name;
+    this._description = description;
+    this._destinations = destinations;
+    this._pictures = pictures;
+    this._isFavourite = isFavourite;
   }
 
   getTemplate() {
@@ -107,15 +114,13 @@ export class EditCard extends AbstractComponent {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            Sightseeing at
+            ${this._type}
           </label>
           <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"
-          value="Saint Petersburg" list="destination-list-1">
+          value="${this._city}" list="destination-list-1">
           <datalist id="destination-list-1">
-            <option value="Amsterdam"></option>
-            <option value="Geneva"></option>
-            <option value="Chamonix"></option>
+            ${this._destinations.map(({name}) => `<option value="${name}"></option>`).join(``)}
           </datalist>
         </div>
 
@@ -148,7 +153,7 @@ export class EditCard extends AbstractComponent {
         <button class="event__reset-btn" type="reset">Delete</button>
 
         <input id="event-favorite-1" class="event__favorite-checkbox  visually-hidden"
-        type="checkbox" name="event-favorite" checked>
+        type="checkbox" name="event-favorite" ${this._isFavourite ? `checked` : ``}>
         <label class="event__favorite-btn" for="event-favorite-1">
           <span class="visually-hidden">Add to favorite</span>
           <svg class="event__favorite-icon" width="28" height="28" viewBox="0 0 28 28">
@@ -169,15 +174,15 @@ export class EditCard extends AbstractComponent {
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
-          ${this._additionalOptions.map(({id, name, adPrice, flag}) =>
+          ${this._additionalOptions.map(({title, price, accepted}) =>
     (`<div class="event__offer-selector">
       <input class="event__offer-checkbox  visually-hidden"
-      id="${id}-1" type="checkbox"
-      name="${id}" ${flag ? `checked` : ``}>
-        <label class="event__offer-label" for="${id}-1">
-          <span class="event__offer-title">${name}</span>
+      id="${title}-1" type="checkbox"
+      name="${title}" ${accepted ? `checked` : ``}>
+        <label class="event__offer-label" for="${title}-1">
+          <span class="event__offer-title">${title}</span>
           &plus;
-          &euro;&nbsp;<span class="event__offer-price">${adPrice}</span>
+          &euro;&nbsp;<span class="event__offer-price">${price}</span>
         </label>
       </div>`)).join(``)}
     </div>
@@ -185,19 +190,12 @@ export class EditCard extends AbstractComponent {
 
         <section class="event__section  event__section--destination">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
-          <p class="event__destination-description">Geneva is a city
-          in Switzerland that lies at the southern
-          tip of expansive Lac Léman (Lake Geneva).
-          Surrounded by the Alps and Jura mountains,
-          the city has views of dramatic Mont Blanc.</p>
+          <p class="event__destination-description">${this._description}</p>
 
           <div class="event__photos-container">
             <div class="event__photos-tape">
-              <img class="event__photo" src="img/photos/1.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/2.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/3.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/4.jpg" alt="Event photo">
-              <img class="event__photo" src="img/photos/5.jpg" alt="Event photo">
+              ${this._pictures.map(({src, description}) =>
+                  `<img class="event__photo" src="${src}" alt="${description}">`).join(``)}
             </div>
           </div>
         </section>

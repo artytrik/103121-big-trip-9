@@ -9,13 +9,13 @@ import 'flatpickr/dist/themes/light.css';
 import {Mode} from '../utils.js';
 
 export class PointController {
-  constructor(container, data, mode, onDataChange, onChangeView) {
+  constructor(container, data, mode, onDataChange, onChangeView, destinations) {
     this._container = container;
     this._data = data;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
     this._pointView = new Card(data);
-    this._pointEdit = new EditCard(data);
+    this._pointEdit = new EditCard(data, destinations);
 
     this.init(mode);
   }
@@ -64,8 +64,6 @@ export class PointController {
         this._container.getElement().replaceChild(this._pointEdit.getElement(), this._pointView.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
-
-
 
     this._pointEdit.getElement()
       .querySelector(`.event__save-btn`)
