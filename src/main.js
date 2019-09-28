@@ -38,13 +38,25 @@ render(tripControlsHeaderElements[1], filtersElement.getElement(), Position.AFTE
 render(tripInfoElement, info.getElement(), Position.AFTERBEGIN);
 render(pageBodyContainer, statistics.getElement(), Position.BEFOREEND);
 
+const onDataChange = (actionType, update) => {
+  switch(actionType) {
+    case `delete`:
+      api.deletePoint({
+        id: update.id
+      })
+        .then(() => api.getPoints())
+        .then((points) => tripController.show(points));
+      break;
+  }
+};
+
 api.getData({url: `destinations`})
   .then((destinations) => tripDestinations = destinations)
   .then(() => api.getData({url: `offers`}))
   .then((offers) => tripAdditionalOptions = offers)
   .then(() => api.getPoints())
   .then((points) => {
-    tripController = new TripController(tripEventsElement, points, tripDestinations, tripAdditionalOptions);
+    tripController = new TripController(tripEventsElement, points, tripDestinations, tripAdditionalOptions, onDataChange);
   })
   .then(() => {
     tripController.init();

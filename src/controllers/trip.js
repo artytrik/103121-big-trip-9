@@ -12,7 +12,7 @@ import {Mode as PointControllerMode} from '../utils.js';
 import moment from "moment";
 
 export class TripController {
-  constructor(container, points, destinations, additionalOptions) {
+  constructor(container, points, destinations, additionalOptions, onDataChange) {
     this._container = container;
     this._points = points;
     this._tripDays = new TripDays();
@@ -21,6 +21,7 @@ export class TripController {
     this._creatingPoint = null;
     this._destinations = destinations;
     this._additionalOptions = additionalOptions;
+    this._onDataChangeServer = onDataChange;
 
     this._subscriptions = [];
     this._onChangeView = this._onChangeView.bind(this);

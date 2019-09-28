@@ -74,20 +74,29 @@ export class PointController {
         const addOptions = Array.from(this._pointEdit.getElement()
             .querySelectorAll(`.event__offer-selector`)).map((addOption) => {
           return ({
-            id: addOption.querySelector(`.event__offer-checkbox`).name,
-            name: addOption.querySelector(`.event__offer-title`).textContent,
-            adPrice: addOption.querySelector(`.event__offer-price`).textContent,
-            flag: addOption.querySelector(`.event__offer-checkbox`).checked
+            title: addOption.querySelector(`.event__offer-title`).textContent,
+            price: addOption.querySelector(`.event__offer-price`).textContent,
+            accepted: addOption.querySelector(`.event__offer-checkbox`).checked
           });
         });
+        const destinationDescription = this._pointEdit.getElement().querySelector(`.event__destination-description`).textContent;
+        const destinationPictures = Array.from(this._pointEdit.getElement().querySelectorAll(`.event__photo`)).map((picture) => ({
+          src: picture.src,
+          description: picture.alt
+        }));
 
         const entry = {
           type: formData.get(`event-type`),
-          city: formData.get(`event-destination`),
+          destination: {
+            name: formData.get(`event-destination`),
+            description: destinationDescription,
+            pictures: destinationPictures
+          },
           dateStart: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
           dateFinish: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
           price: formData.get(`event-price`),
-          additionalOptions: addOptions
+          additionalOptions: addOptions,
+          isFavourite: Boolean(formData.get(`event-favourite`))
         };
 
         this._onDataChange(entry, mode === Mode.DEFAULT ? this._data : null);
