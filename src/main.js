@@ -47,6 +47,15 @@ const onDataChange = (actionType, update) => {
         .then(() => api.getPoints())
         .then((points) => tripController.show(points));
       break;
+    case `update`:
+      console.log(update);
+      api.updatePoint({
+        id: update.id,
+        data: update.toRAW()
+      })
+      .then(() => api.getPoints())
+      .then((points) => tripController.show(points));
+      break;
   }
 };
 

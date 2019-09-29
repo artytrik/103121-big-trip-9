@@ -2,7 +2,7 @@ import {AbstractComponent} from './abstract-component.js';
 import moment from "moment";
 
 export class Card extends AbstractComponent {
-  constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions}) {
+  constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions, id}) {
     super();
     this._type = type;
     this._city = name;
@@ -10,6 +10,7 @@ export class Card extends AbstractComponent {
     this._dateFinish = new Date(dateFinish);
     this._price = price;
     this._additionalOptions = additionalOptions;
+    this._id = id;
   }
 
   getTemplate() {

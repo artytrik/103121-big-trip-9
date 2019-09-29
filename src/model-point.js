@@ -17,6 +17,19 @@ class ModelPoint {
   static parsePoints(data) {
     return data.map(ModelPoint.parsePoint);
   }
+
+  toRAW() {
+    return {
+      'id': this.id,
+      'type': this.type,
+      'destination': this.destination,
+      'base_price': this.price,
+      'date_from': this.dateStart,
+      'date_to': this.dateFinish,
+      'offers': this.additionalOptions,
+      'is_favourite': this.isFavourite
+    };
+  }
 };
 
 export default ModelPoint;

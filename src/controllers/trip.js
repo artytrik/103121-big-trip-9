@@ -51,7 +51,12 @@ export class TripController {
     this._container.classList.add(`visually-hidden`);
   }
 
-  show() {
+  show(points) {
+    if (points !== this._points) {
+      this._points = points;
+      this._renderBoard();
+    }
+
     this._container.classList.remove(`visually-hidden`);
   }
 
@@ -123,21 +128,8 @@ export class TripController {
     this._subscriptions.forEach((it) => it());
   }
 
-  _onDataChange(newData, oldData) {
-    const index = this._points.findIndex((it) => it === oldData);
-
-    if (newData === null && oldData === null) {
-      this._creatingPoint = null;
-    } else if (newData === null) {
-      this._points = [...this._points.slice(0, index), ...this._points.slice(index + 1)];
-    } else if (oldData === null) {
-      this._creatingPoint = null;
-      this._points = [newData, ...this._points];
-    } else {
-      this._points[index] = newData;
-    }
-
-    this._renderBoard(this._points);
+  _onDataChange(actionType, update) {
+    this._onDataChangeServer(actionType, update);
   }
 
   _onSortLinkClick(evt) {

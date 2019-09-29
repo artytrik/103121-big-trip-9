@@ -3,7 +3,7 @@ import moment from "moment";
 
 export class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
-      dateStart, dateFinish, price, additionalOptions, isFavourite}, destinations)
+      dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations)
   {
     super();
     this._type = type;
@@ -16,6 +16,7 @@ export class EditCard extends AbstractComponent {
     this._destinations = destinations;
     this._pictures = pictures;
     this._isFavourite = isFavourite;
+    this._id = id;
   }
 
   getTemplate() {

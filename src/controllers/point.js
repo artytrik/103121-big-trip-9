@@ -86,6 +86,7 @@ export class PointController {
         }));
 
         const entry = {
+          id: this._data.id,
           type: formData.get(`event-type`),
           destination: {
             name: formData.get(`event-destination`),
@@ -96,17 +97,35 @@ export class PointController {
           dateFinish: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
           price: formData.get(`event-price`),
           additionalOptions: addOptions,
-          isFavourite: Boolean(formData.get(`event-favourite`))
+          isFavourite: Boolean(formData.get(`event-favourite`)),
+          toRAW() {
+            return {
+              'id': this.id,
+              'type': this.type,
+              'destination': this.destination,
+              'base_price': this.price,
+              'date_from': this.dateStart,
+              'date_to': this.dateFinish,
+              'offers': this.additionalOptions,
+              'is_favourite': this.isFavourite
+            };
+          }
         };
 
-        this._onDataChange(entry, mode === Mode.DEFAULT ? this._data : null);
+        this._onDataChange(mode === Mode.DEFAULT ? `update` : `create`, entry);
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
     this._pointEdit.getElement().querySelector(`.event__reset-btn`)
-      .addEventListener(`click`, () => {
-        this._onDataChange(null, this._data);
+      .addEventListener(`click`, (evt) => {
+        evt.preventDefault();
+
+        if (mode === Mode.ADDING) {
+          this._onDataChange(null, null);
+        } else if (mode === Mode.DEFAULT) {
+          this._onDataChange(`delete`, this._data);
+        }
       });
 
     render(this._container.getElement(), currentView.getElement(), renderPosition);
