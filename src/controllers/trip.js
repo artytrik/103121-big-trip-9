@@ -12,13 +12,16 @@ import {Mode as PointControllerMode} from '../utils.js';
 import moment from "moment";
 
 export class TripController {
-  constructor(container, points) {
+  constructor(container, points, destinations, additionalOptions, onDataChange) {
     this._container = container;
     this._points = points;
     this._tripDays = new TripDays();
     this._emptyResult = new EmptyResult();
     this._sort = new Sort();
     this._creatingPoint = null;
+    this._destinations = destinations;
+    this._additionalOptions = additionalOptions;
+    this._onDataChangeServer = onDataChange;
 
     this._subscriptions = [];
     this._onChangeView = this._onChangeView.bind(this);
@@ -48,7 +51,12 @@ export class TripController {
     this._container.classList.add(`visually-hidden`);
   }
 
-  show() {
+  show(points) {
+    if (points !== this._points) {
+      this._points = points;
+      this._renderBoard();
+    }
+
     this._container.classList.remove(`visually-hidden`);
   }
 
@@ -60,8 +68,11 @@ export class TripController {
     const defaultPoint = {
       type: [`Bus`],
       city: [],
-      photos: [],
-      description: ``,
+      destination: {
+        name: ``,
+        pictures: [],
+        description: ``
+      },
       dateStart: new Date(),
       dateFinish: new Date(),
       price: 0,
@@ -69,7 +80,7 @@ export class TripController {
     };
 
     this._creatingPoint = new PointController(this._tripDays,
-        defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView);
+        defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView, this._destinations);
   }
 
   _renderBoard() {
@@ -82,7 +93,7 @@ export class TripController {
 
   _renderPoints(container, point) {
     const pointController = new PointController(container,
-        point, PointControllerMode.DEFAULT, this._onDataChange, this._onChangeView);
+        point, PointControllerMode.DEFAULT, this._onDataChange, this._onChangeView, this._destinations);
     this._subscriptions.push(pointController.setDefaultView.bind(pointController));
   }
 
@@ -120,21 +131,8 @@ export class TripController {
     this._subscriptions.forEach((it) => it());
   }
 
-  _onDataChange(newData, oldData) {
-    const index = this._points.findIndex((it) => it === oldData);
-
-    if (newData === null && oldData === null) {
-      this._creatingPoint = null;
-    } else if (newData === null) {
-      this._points = [...this._points.slice(0, index), ...this._points.slice(index + 1)];
-    } else if (oldData === null) {
-      this._creatingPoint = null;
-      this._points = [newData, ...this._points];
-    } else {
-      this._points[index] = newData;
-    }
-
-    this._renderBoard(this._points);
+  _onDataChange(actionType, update) {
+    this._onDataChangeServer(actionType, update);
   }
 
   _onSortLinkClick(evt) {
