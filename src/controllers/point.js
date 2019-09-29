@@ -1,21 +1,19 @@
-import {Position} from '../utils.js';
-import {Card} from '../components/card.js';
-import {EditCard} from '../components/edit-card.js';
-import {render} from '../utils.js';
-import moment from "moment";
+import {Position, render, Mode, DateFormat, Key, TRANSPORT_TYPES, PLACE_TYPES} from '../utils.js';
+import Card from '../components/card.js';
+import EditCard from '../components/edit-card.js';
+import moment from 'moment';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {Mode} from '../utils.js';
 
-export class PointController {
+class PointController {
   constructor(container, data, mode, onDataChange, onChangeView, destinations) {
     this._container = container;
     this._data = data;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
     this._pointView = new Card(data);
-    this._pointEdit = new EditCard(data, destinations);
+    this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES);
 
     this.init(mode);
   }
@@ -30,7 +28,7 @@ export class PointController {
     }
 
     const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
+      if (evt.key === Key.ESCAPE_IE || evt.key === Key.ESCAPE) {
         if (mode === Mode.DEFAULT) {
           if (this._container.contains(this._pointEdit.getElement())) {
             this._container.replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
@@ -45,16 +43,16 @@ export class PointController {
     flatpickr(this._pointEdit.getElement().querySelector(`#event-start-time-1`), {
       altInput: true,
       allowInput: true,
-      defaultDate: moment(this._data.dateStart).format(`DD/MM/YY HH:mm`),
-      dateFormat: `d/m/y H:i`,
+      defaultDate: moment(this._data.dateStart).format(DateFormat.DATE_TIME),
+      dateFormat: DateFormat.DATE_TIME_FLATPICKR,
       enableTime: true
     });
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-end-time-1`), {
       altInput: true,
       allowInput: true,
-      defaultDate: moment(this._data.dateFinish).format(`DD/MM/YY HH:mm`),
-      dateFormat: `d/m/y H:i`,
+      defaultDate: moment(this._data.dateFinish).format(DateFormat.DATE_TIME),
+      dateFormat: DateFormat.DATE_TIME_FLATPICKR,
       enableTime: true
     });
 
@@ -93,8 +91,8 @@ export class PointController {
             description: destinationDescription,
             pictures: destinationPictures
           },
-          dateStart: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
-          dateFinish: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
+          dateStart: moment(formData.get(`event-start-time`), DateFormat.DATE_TIME).valueOf(),
+          dateFinish: moment(formData.get(`event-end-time`), DateFormat.DATE_TIME).valueOf(),
           price: formData.get(`event-price`),
           additionalOptions: addOptions,
           isFavourite: Boolean(formData.get(`event-favourite`)),
@@ -137,3 +135,5 @@ export class PointController {
     }
   }
 }
+
+export default PointController;

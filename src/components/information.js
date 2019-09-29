@@ -1,6 +1,6 @@
-import {AbstractComponent} from './abstract-component.js';
+import AbstractComponent from './abstract-component.js';
 
-export class Info extends AbstractComponent {
+class Information extends AbstractComponent {
   constructor({cities}) {
     super();
     this._cities = cities;
@@ -15,3 +15,5 @@ export class Info extends AbstractComponent {
     </div>`;
   }
 }
+
+export default Information;

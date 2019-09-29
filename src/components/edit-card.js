@@ -1,9 +1,10 @@
-import {AbstractComponent} from './abstract-component.js';
-import moment from "moment";
+import AbstractComponent from './abstract-component.js';
+import moment from 'moment';
+import {DateFormat, Key} from '../utils.js';
 
-export class EditCard extends AbstractComponent {
+class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
-    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations) {
+    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations, transportTypes, placeTypes) {
     super();
     this._type = type;
     this._dateStart = new Date(dateStart);
@@ -16,6 +17,8 @@ export class EditCard extends AbstractComponent {
     this._pictures = pictures;
     this._isFavourite = isFavourite;
     this._id = id;
+    this._transportTypes = transportTypes;
+    this._placeTypes = placeTypes;
   }
 
   getTemplate() {
@@ -34,80 +37,26 @@ export class EditCard extends AbstractComponent {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Transfer</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="taxi">
-                <label class="event__type-label  event__type-label--taxi"
-                for="event-type-taxi-1">Taxi</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="bus">
-                <label class="event__type-label  event__type-label--bus"
-                for="event-type-bus-1">Bus</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="train">
-                <label class="event__type-label  event__type-label--train"
-                for="event-type-train-1">Train</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="ship">
-                <label class="event__type-label  event__type-label--ship"
-                for="event-type-ship-1">Ship</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-transport-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="transport">
-                <label class="event__type-label  event__type-label--transport"
-                for="event-type-transport-1">Transport</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="drive">
-                <label class="event__type-label  event__type-label--drive"
-                for="event-type-drive-1">Drive</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="flight" checked>
-                <label class="event__type-label  event__type-label--flight"
-                for="event-type-flight-1">Flight</label>
-              </div>
+              ${this._transportTypes.map((type) =>
+                `<div class="event__type-item">
+                  <input id="event-type-${type}-1" class="event__type-input
+                  visually-hidden" type="radio" name="event-type" value="${type}">
+                  <label class="event__type-label  event__type-label--${type}"
+                  for="event-type-${type}-1">${type}</label>
+                </div>`
+              ).join(``)}
             </fieldset>
 
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Activity</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="check-in">
-                <label class="event__type-label  event__type-label--check-in"
-                for="event-type-check-in-1">Check-in</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="sightseeing">
-                <label class="event__type-label  event__type-label--sightseeing" f
-                or="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="restaurant">
-                <label class="event__type-label  event__type-label--restaurant"
-                for="event-type-restaurant-1">Restaurant</label>
-              </div>
+              ${this._placeTypes.map((type) =>
+                `<div class="event__type-item">
+                  <input id="event-type-${type}-1" class="event__type-input
+                  visually-hidden" type="radio" name="event-type" value="${type}">
+                  <label class="event__type-label  event__type-label--${type}"
+                  for="event-type-${type}-1">${type}</label>
+                </div>`
+              ).join(``)}
             </fieldset>
           </div>
         </div>
@@ -130,14 +79,14 @@ export class EditCard extends AbstractComponent {
           </label>
           <input class="event__input  event__input--time"
           id="event-start-time-1" type="text" name="event-start-time"
-          value="${moment(this._dateStart).format(`DD/MM/YY HH:mm`)}">
+          value="${moment(this._dateStart).format(DateFormat.DATE_TIME)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
           <input class="event__input  event__input--time"
           id="event-end-time-1" type="text" name="event-end-time"
-          value="${moment(this._dateFinish).format(`DD/MM/YY HH:mm`)}">
+          value="${moment(this._dateFinish).format(DateFormat.DATE_TIME)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -182,7 +131,7 @@ export class EditCard extends AbstractComponent {
         <label class="event__offer-label" for="${title}-1">
           <span class="event__offer-title">${title}</span>
           &plus;
-          &euro;&nbsp;<span class="event__offer-price">${price}</span>
+          &euro;&nbsp;<span class="event__offer-price">${price.toString()}</span>
         </label>
       </div>`)).join(``)}
     </div>
@@ -207,9 +156,11 @@ export class EditCard extends AbstractComponent {
   _subscribeOnEvents() {
     this.getElement()
       .querySelector(`.event__type-input`).addEventListener(`keydown`, (evt) => {
-        if (evt.key === `Enter`) {
+        if (evt.key === Key.ENTER) {
           evt.preventDefault();
         }
       });
   }
 }
+
+export default EditCard;

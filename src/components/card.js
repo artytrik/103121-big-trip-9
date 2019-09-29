@@ -1,7 +1,8 @@
-import {AbstractComponent} from './abstract-component.js';
-import moment from "moment";
+import AbstractComponent from './abstract-component.js';
+import moment from 'moment';
+import {DateFormat} from '../utils.js';
 
-export class Card extends AbstractComponent {
+class Card extends AbstractComponent {
   constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions, id}) {
     super();
     this._type = type;
@@ -25,14 +26,14 @@ export class Card extends AbstractComponent {
       <div class="event__schedule">
         <p class="event__time">
           <time class="event__start-time" datetime="${moment(this._dateStart)
-            .format(`YYYY-MM-DD`)}T${moment(this._dateStart).format(`HH:mm`)}">
-          ${moment(this._dateStart).format(`HH:mm`)}</time>
+            .format(DateFormat.YEAR_MONTH_DAY)}T${moment(this._dateStart).format(DateFormat.HOURS_MINUTES)}">
+          ${moment(this._dateStart).format(DateFormat.HOURS_MINUTES)}</time>
           &mdash;
           <time class="event__end-time" datetime="${moment(this._dateFinish)
-            .format(`YYYY-MM-DD`)}T${moment(this._dateFinish).format(`HH:mm`)}">
-          ${moment(this._dateFinish).format(`HH:mm`)}</time>
+            .format(DateFormat.YEAR_MONTH_DAY)}T${moment(this._dateFinish).format(DateFormat.YEAR_MONTH_DAY)}">
+          ${moment(this._dateFinish).format(DateFormat.HOURS_MINUTES)}</time>
         </p>
-        <p class="event__duration">${moment(this._dateFinish - this._dateStart).format(`HH:mm`)}</p>
+        <p class="event__duration">${moment(this._dateFinish - this._dateStart).format(DateFormat.HOURS_MINUTES)}</p>
       </div>
 
       <p class="event__price">
@@ -56,3 +57,5 @@ export class Card extends AbstractComponent {
   </li>`;
   }
 }
+
+export default Card;
