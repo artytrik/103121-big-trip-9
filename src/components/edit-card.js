@@ -3,8 +3,7 @@ import moment from "moment";
 
 export class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
-      dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations)
-  {
+    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations) {
     super();
     this._type = type;
     this._dateStart = new Date(dateStart);
@@ -196,7 +195,7 @@ export class EditCard extends AbstractComponent {
           <div class="event__photos-container">
             <div class="event__photos-tape">
               ${this._pictures.map(({src, description}) =>
-                  `<img class="event__photo" src="${src}" alt="${description}">`).join(``)}
+    `<img class="event__photo" src="${src}" alt="${description}">`).join(``)}
             </div>
           </div>
         </section>
