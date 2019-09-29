@@ -37,7 +37,14 @@ class API {
   }
 
   createPoint({point}) {
-
+    return this._load({
+      url: `points`,
+      method: Method.POST,
+      body: JSON.stringify(point),
+      headers: new Headers({'Content-Type': `application/json`})
+    })
+      .then(toJSON)
+      .then(ModelPoint.parsePoint);
   }
 
   updatePoint({id, data}) {

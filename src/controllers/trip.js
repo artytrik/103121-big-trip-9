@@ -68,8 +68,11 @@ export class TripController {
     const defaultPoint = {
       type: [`Bus`],
       city: [],
-      photos: [],
-      description: ``,
+      destination: {
+        name: ``,
+        pictures: [],
+        description: ``
+      },
       dateStart: new Date(),
       dateFinish: new Date(),
       price: 0,
