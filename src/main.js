@@ -57,7 +57,7 @@ const onDataChange = (actionType, update) => {
       break;
     case `create`:
       api.createPoint({
-        point: update.toRAW()
+        data: update.toRAW()
       })
       .then(() => api.getPoints())
       .then((points) => tripController.show(points));
