@@ -1,8 +1,7 @@
 import Menu from './components/menu.js';
 import Information from './components/information.js';
 import Filters from './components/filters.js';
-import {infoElement} from './data.js';
-import {render, Position, getTripCost} from './utils.js';
+import {render, Position, getTripCost, ActionType, getInformation} from './utils.js';
 import TripController from './controllers/trip.js';
 import Statistics from './components/statistics.js';
 import API from './api.js';
@@ -26,6 +25,7 @@ let tripDestinations;
 let tripAdditionalOptions;
 let pointsData;
 let information;
+let pointsInformation;
 const filtersElement = new Filters(FILTER_TABS);
 const menuElement = new Menu();
 const statistics = new Statistics();
@@ -38,14 +38,14 @@ render(pageBodyContainer, statistics.getElement(), Position.BEFOREEND);
 
 const onDataChange = (actionType, update) => {
   switch(actionType) {
-    case `delete`:
+    case ActionType.DELETE:
       api.deletePoint({
         id: update.id
       })
         .then(() => api.getPoints())
         .then((points) => tripController.show(points));
       break;
-    case `update`:
+    case ActionType.UPDATE:
       api.updatePoint({
         id: update.id,
         data: update.toRAW()
@@ -53,7 +53,7 @@ const onDataChange = (actionType, update) => {
       .then(() => api.getPoints())
       .then((points) => tripController.show(points));
       break;
-    case `create`:
+    case ActionType.CREATE:
       api.createPoint({
         data: update.toRAW()
       })
@@ -70,10 +70,11 @@ api.getData({url: `destinations`})
   .then(() => api.getPoints())
   .then((points) => {
     pointsData = points;
+    pointsInformation = getInformation(points.slice().sort((a,b) => a - b));
   })
   .then(() => {
     tripController = new TripController(tripEventsElement, pointsData, tripDestinations, tripAdditionalOptions, onDataChange);
-    information = new Information(infoElement);
+    information = new Information(pointsInformation);
   })
   .then(() => {
     tripController.init();

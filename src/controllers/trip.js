@@ -2,7 +2,7 @@ import TripContainer from '../components/trip-container.js';
 import CardsContainer from '../components/cards-container.js';
 import DayInformation from '../components/day-information.js';
 import EmptyResult from '../components/empty-result.js';
-import {render, unrender, Position, Mode as PointControllerMode} from '../utils.js';
+import {render, unrender, Position, Mode as PointControllerMode, SortType, FilterType} from '../utils.js';
 import Day from '../components/day.js';
 import Sort from '../components/sort.js';
 import PointController from './point.js';
@@ -138,14 +138,14 @@ class TripController {
     this._tripContainer.getElement().innerHTML = ``;
 
     switch (evt.target.dataset.sortType) {
-      case `event`:
+      case SortType.EVENT:
         this._renderDays(this._points);
         break;
-      case `time`:
+      case SortType.TIME:
         const sortedByTime = this._points.slice().sort((a, b) => a.dateStart - b.dateFinish);
         this._renderDays(sortedByTime);
         break;
-      case `price`:
+      case SortType.PRICE:
         const sortedByPrice = this._points.slice().sort((a, b) => a.price - b.price);
         this._renderDays(sortedByPrice);
         break;
@@ -158,14 +158,14 @@ class TripController {
     this._tripContainer.getElement().innerHTML = ``;
 
     switch (evt.target.id) {
-      case `filter-everything`:
+      case FilterType.EVERYTHING:
         this._renderDays(this._points);
         break;
-      case `filter-future`:
+      case FilterType.FUTURE:
         const filterFuturePoints = this._points.filter((point) => moment(point.dateStart).isAfter(new Date(Date.now())));
         this._renderDays(filterFuturePoints);
         break;
-      case `filter-past`:
+      case FilterType.PAST:
         const filterPastPoints = this._points.filter((point) => moment(point.dateFinish).isBefore(new Date(Date.now())));
         this._renderDays(filterPastPoints);
         break;

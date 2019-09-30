@@ -22,10 +22,7 @@ class PointController {
     let renderPosition = Position.BEFOREEND;
     let currentView = this._pointView;
 
-    if (mode === Mode.ADDING) {
-      renderPosition = Position.AFTERBEGIN;
-      currentView = this._pointEdit;
-    }
+    mode === Mode.ADDING ? renderPosition : currentView;
 
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE_IE || evt.key === Key.ESCAPE) {
@@ -68,49 +65,7 @@ class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        const formData = new FormData(this._pointEdit.getElement().querySelector(`.event--edit`));
-        const addOptions = Array.from(this._pointEdit.getElement()
-            .querySelectorAll(`.event__offer-selector`)).map((addOption) => {
-          return ({
-            title: addOption.querySelector(`.event__offer-title`).textContent,
-            price: addOption.querySelector(`.event__offer-price`).textContent,
-            accepted: addOption.querySelector(`.event__offer-checkbox`).checked
-          });
-        });
-        const destinationDescription = this._pointEdit.getElement().querySelector(`.event__destination-description`).textContent;
-        const destinationPictures = Array.from(this._pointEdit.getElement().querySelectorAll(`.event__photo`)).map((picture) => ({
-          src: picture.src,
-          description: picture.alt
-        }));
-
-        const entry = {
-          id: this._data.id,
-          type: formData.get(`event-type`),
-          destination: {
-            name: formData.get(`event-destination`),
-            description: destinationDescription,
-            pictures: destinationPictures
-          },
-          dateStart: moment(formData.get(`event-start-time`), DateFormat.DATE_TIME).valueOf(),
-          dateFinish: moment(formData.get(`event-end-time`), DateFormat.DATE_TIME).valueOf(),
-          price: formData.get(`event-price`),
-          additionalOptions: addOptions,
-          isFavourite: Boolean(formData.get(`event-favourite`)),
-          toRAW() {
-            return {
-              'id': this.id,
-              'type': this.type,
-              'destination': this.destination,
-              'base_price': this.price,
-              'date_from': this.dateStart,
-              'date_to': this.dateFinish,
-              'offers': this.additionalOptions,
-              'is_favourite': this.isFavourite
-            };
-          }
-        };
-
-        this._onDataChange(mode === Mode.DEFAULT ? `update` : `create`, entry);
+        this._onDataChange(mode === Mode.DEFAULT ? `update` : `create`, this._getNewData());
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
@@ -128,6 +83,51 @@ class PointController {
 
     render(this._container.getElement(), currentView.getElement(), renderPosition);
   }
+
+  _getNewData() {
+    const formData = new FormData(this._pointEdit.getElement().querySelector(`.event--edit`));
+    const addOptions = Array.from(this._pointEdit.getElement()
+        .querySelectorAll(`.event__offer-selector`)).map((addOption) => {
+      return ({
+        title: addOption.querySelector(`.event__offer-title`).textContent,
+        price: addOption.querySelector(`.event__offer-price`).textContent,
+        accepted: addOption.querySelector(`.event__offer-checkbox`).checked
+      });
+    });
+    const destinationDescription = this._pointEdit.getElement().querySelector(`.event__destination-description`).textContent;
+    const destinationPictures = Array.from(this._pointEdit.getElement().querySelectorAll(`.event__photo`)).map((picture) => ({
+      src: picture.src,
+      description: picture.alt
+    }));
+
+    const entry = {
+      id: this._data.id,
+      type: formData.get(`event-type`),
+      destination: {
+        name: formData.get(`event-destination`),
+        description: destinationDescription,
+        pictures: destinationPictures
+      },
+      dateStart: moment(formData.get(`event-start-time`), DateFormat.DATE_TIME).valueOf(),
+      dateFinish: moment(formData.get(`event-end-time`), DateFormat.DATE_TIME).valueOf(),
+      price: formData.get(`event-price`),
+      additionalOptions: addOptions,
+      isFavourite: Boolean(formData.get(`event-favourite`)),
+      toRAW() {
+        return {
+          'id': this.id,
+          'type': this.type,
+          'destination': this.destination,
+          'base_price': this.price,
+          'date_from': this.dateStart,
+          'date_to': this.dateFinish,
+          'offers': this.additionalOptions,
+          'is_favourite': this.isFavourite
+        };
+      }
+    };
+    return entry;
+  };
 
   setDefaultView() {
     if (this._container.getElement().contains(this._pointEdit.getElement())) {

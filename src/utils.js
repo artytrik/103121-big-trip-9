@@ -13,6 +13,7 @@ export const DateFormat = {
   HOURS_MINUTES: `HH:mm`,
   YEAR_MONTH_DAY: `YYYY-MM-DD`,
   MONTH_DAY: `MMM DD`,
+  DAY_MONTH: `DD MMM`,
   DATE_TIME: `DD/MM/YY HH:mm`,
   DATE_TIME_FLATPICKR: `d/m/y H:i`,
 }
@@ -21,6 +22,24 @@ export const Key = {
   ENTER: `Enter`,
   ESCAPE_IE: `Escape`,
   ESCAPE: `Esc`,
+}
+
+export const SortType = {
+  EVENT: `event`,
+  TIME: `time`,
+  PRICE: `price`,
+}
+
+export const FilterType = {
+  EVERYTHING: `filter-everything`,
+  FUTURE: `filter-future`,
+  PAST: `filter-past`,
+}
+
+export const ActionType = {
+  DELETE: `delete`,
+  UPDATE: `update`,
+  CREATE: `create`,
 }
 
 export const TRANSPORT_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
@@ -59,3 +78,11 @@ export const getTripCost = (points) => (
     return acc + Number(price) + additionalOptionsCost;
   }, 0)
 );
+
+export const getInformation = (points) => {
+  return {
+    cities: points.map(({destination: {name}}) => name),
+    dateStart: points[0].dateStart,
+    dateFinish: points[getTripCost.length - 1].dateFinish
+  }
+}
