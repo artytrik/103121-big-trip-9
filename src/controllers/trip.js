@@ -65,9 +65,9 @@ class TripController {
     const defaultPoint = {
       type: `taxi`,
       destination: {
-        name: ``,
+        description: `Напишите`,
         pictures: [],
-        description: ``
+        name: `Vladivostok`,
       },
       dateStart: new Date(),
       dateFinish: new Date(),
@@ -75,6 +75,8 @@ class TripController {
       additionalOptions: [],
       isFavourite: false,
     };
+
+    this._onChangeView();
 
     this._creatingPoint = new PointController(this._tripContainer,
         defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView, this._destinations);
@@ -128,8 +130,9 @@ class TripController {
     this._subscriptions.forEach((it) => it());
   }
 
-  _onDataChange(actionType, update) {
-    this._onDataChangeServer(actionType, update);
+  _onDataChange(actionType, update, onError) {
+    this._creatingPoint = null;
+    this._onDataChangeServer(actionType, update, onError);
   }
 
   _onSortLinkClick(evt) {

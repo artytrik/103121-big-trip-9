@@ -36,7 +36,7 @@ render(tripControlsHeaderElements[0], menuElement.getElement(), Position.AFTEREN
 render(tripControlsHeaderElements[1], filtersElement.getElement(), Position.AFTEREND);
 render(pageBodyContainer, statistics.getElement(), Position.BEFOREEND);
 
-const onDataChange = (actionType, update) => {
+const onDataChange = (actionType, update, onError) => {
   switch(actionType) {
     case ActionType.DELETE:
       api.deletePoint({
@@ -51,7 +51,10 @@ const onDataChange = (actionType, update) => {
         data: update.toRAW()
       })
       .then(() => api.getPoints())
-      .then((points) => tripController.show(points));
+      .then((points) => tripController.show(points))
+      .catch (() => {
+        onError();
+      });
       break;
     case ActionType.CREATE:
       api.createPoint({

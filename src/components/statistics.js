@@ -1,5 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import Chart from 'chart.js';
+import moment from 'moment';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 class Statistics extends AbstractComponent {
@@ -40,6 +41,7 @@ class Statistics extends AbstractComponent {
 
     this._renderMoneyStat();
     this._renderTransportStat();
+    this._renderTimeSpendStat();
   }
 
   _renderStat(name, container, labels, data) {
@@ -97,11 +99,10 @@ class Statistics extends AbstractComponent {
   }
 
   _renderMoneyStat() {
-    const moneyLabels = this._points.map(({type}) => type);
+    const moneyLabels = [...new Set(this._points.map(({type}) => type))];
     const moneyData = moneyLabels.reduce((acc, label) => {
       const pointsByLabel = this._points.filter(({type}) => type === label);
       const labelPrice = pointsByLabel.reduce((sum, {price}) => sum + Number(price), 0);
-
       acc.push(labelPrice);
       return acc;
     }, []);
@@ -110,15 +111,28 @@ class Statistics extends AbstractComponent {
   }
 
   _renderTransportStat() {
-    const transportLabels = this._points.map(({type}) => type);
+    const transportLabels = [...new Set(this._points.map(({type}) => type))];
     const transportData = transportLabels.reduce((acc, label) => {
       const transportNumber = this._points.filter(({type}) => type === label).length;
-
       acc.push(transportNumber);
       return acc;
     }, []);
 
     this._renderStat(`TRANSPORT`, this._transportCtx, transportLabels, transportData);
+  }
+
+  _renderTimeSpendStat() {
+    const timeSpendLabels = [...new Set(this._points.map(({type}) => type))];
+    const timeSpendData = timeSpendLabels.reduce((acc, label) => {
+      const pointsByLabel = this._points.filter(({type}) => type === label);
+      const labelTime = pointsByLabel.reduce((sum, {dateStart, dateFinish}) =>
+          sum + (dateFinish - dateStart), 0);
+      const hoursCount = Math.floor(moment.duration(labelTime).asHours());
+      acc.push(hoursCount);
+      return acc;
+    }, []);
+
+    this._renderStat(`TIME SPEND`, this._timeSpendCtx, timeSpendLabels, timeSpendData);
   }
 }
 

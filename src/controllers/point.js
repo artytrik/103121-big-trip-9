@@ -66,6 +66,8 @@ class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
+        this.block();
+
         this._onDataChange(mode === Mode.DEFAULT ? `update` : `create`, this._getNewData());
 
         document.removeEventListener(`keydown`, onEscKeyDown);
@@ -113,7 +115,7 @@ class PointController {
       dateFinish: moment(formData.get(`event-end-time`), DateFormat.DATE_TIME).valueOf(),
       price: Number(formData.get(`event-price`)),
       additionalOptions: addOptions,
-      isFavourite: Boolean(formData.get(`event-favourite`)),
+      isFavourite: Boolean(formData.get(`event-favorite`)),
       toRAW() {
         return {
           'id': this.id,
@@ -130,9 +132,27 @@ class PointController {
     return entry;
   };
 
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._pointEdit.getElement().style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
+
+    setTimeout(() => {
+      this._pointEdit.getElement().style.animation = ``
+    }, ANIMATION_TIMEOUT);
+  }
+
+  block() {
+    const saveButton = this._pointEdit.getElement().querySelector(`.event__save-btn`);
+    const deleteButton = this._pointEdit.getElement().querySelector(`.event__reset-btn`);
+
+    saveButton.disabled = true;
+    deleteButton.disabled = true;
+  }
+
   setDefaultView() {
     if (this._container.getElement().contains(this._pointEdit.getElement())) {
-      this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+      this._container.getElement().replaceChild(this._pointView.getElement(),
+      this._pointEdit.getElement());
     }
   }
 }

@@ -7,7 +7,7 @@ class ModelPoint {
     this.dateStart = new Date(data[`date_from`]);
     this.dateFinish = new Date(data[`date_to`]);
     this.additionalOptions = data[`offers`] || [];
-    this.isFavourite = Boolean(data[`is_favourite`]);
+    this.isFavourite = Boolean(data[`is_favorite`]);
   }
 
   static parsePoint(data) {
