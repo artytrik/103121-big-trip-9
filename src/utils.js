@@ -1,3 +1,5 @@
+import moment from 'moment';
+
 export const Position = {
   AFTERBEGIN: `afterbegin`,
   BEFOREEND: `beforeend`,
@@ -86,3 +88,16 @@ export const getInformation = (points) => {
     dateFinish: points[getTripCost.length - 1].dateFinish
   }
 }
+
+export const transformFirstLetter = (string) => `${string[0].toUpperCase()}${string.substring(1)}`;
+
+export const getTimeDifference = (dateStart, dateFinish) => {
+  const diff = dateFinish - dateStart;
+  const duration = moment.duration(diff);
+
+  const minutesPart = `${String(duration.minutes()).padStart(2, `0`)}M`;
+  const hoursPart = (duration.days() > 0 || duration.hours() > 0) ? `${String(duration.hours()).padStart(2, `0`)}H` : ``;
+  const daysPart = duration.days() > 0 ? `${String(duration.days()).padStart(2, `0`)}D` : ``;
+
+  return `${daysPart} ${hoursPart} ${minutesPart}`;
+};

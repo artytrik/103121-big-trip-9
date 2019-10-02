@@ -6,7 +6,7 @@ import TripController from './controllers/trip.js';
 import Statistics from './components/statistics.js';
 import API from './api.js';
 
-const FILTER_TABS = [`Everything`, `Future`, `Past`];
+const FILTER_TABS = [`everything`, `future`, `past`];
 const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
 const END_POINT = `https://htmlacademy-es-9.appspot.com/big-trip/`;
 
@@ -92,10 +92,16 @@ menuElement.getElement().addEventListener(`click`, (evt) => {
 
   evt.target.classList.add(`trip-tabs__btn--active`);
 
+  if (evt.target.previousElementSibling) {
+    evt.target.previousElementSibling.classList.remove(`trip-tabs__btn--active`);
+  } else {
+    evt.target.nextElementSibling.classList.remove(`trip-tabs__btn--active`);
+  }
+
   switch (evt.target.id) {
     case `table-button`:
       statistics.hide();
-      tripController.show();
+      tripController.show(pointsData);
       break;
     case `stats-button`:
       tripController.hide();

@@ -12,7 +12,7 @@ class PointController {
     this._data = data;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
-    this._pointView = new Card(data);
+    this._pointView = new Card(data, TRANSPORT_TYPES);
     this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES);
 
     this.init(mode);
@@ -22,7 +22,10 @@ class PointController {
     let renderPosition = Position.BEFOREEND;
     let currentView = this._pointView;
 
-    mode === Mode.ADDING ? renderPosition : currentView;
+    if (mode === Mode.ADDING) {
+      renderPosition = Position.AFTERBEGIN;
+      currentView = this._pointEdit;
+    }
 
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE_IE || evt.key === Key.ESCAPE) {
@@ -38,16 +41,14 @@ class PointController {
     };
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-start-time-1`), {
-      altInput: true,
-      allowInput: true,
+      allowInput: false,
       defaultDate: moment(this._data.dateStart).format(DateFormat.DATE_TIME),
-      dateFormat: DateFormat.DATE_TIME_FLATPICKR,
+      dateFormat: `d/m/y H:i`,
       enableTime: true
     });
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-end-time-1`), {
-      altInput: true,
-      allowInput: true,
+      allowInput: false,
       defaultDate: moment(this._data.dateFinish).format(DateFormat.DATE_TIME),
       dateFormat: DateFormat.DATE_TIME_FLATPICKR,
       enableTime: true
@@ -90,7 +91,7 @@ class PointController {
         .querySelectorAll(`.event__offer-selector`)).map((addOption) => {
       return ({
         title: addOption.querySelector(`.event__offer-title`).textContent,
-        price: addOption.querySelector(`.event__offer-price`).textContent,
+        price: Number(addOption.querySelector(`.event__offer-price`).textContent),
         accepted: addOption.querySelector(`.event__offer-checkbox`).checked
       });
     });
@@ -110,7 +111,7 @@ class PointController {
       },
       dateStart: moment(formData.get(`event-start-time`), DateFormat.DATE_TIME).valueOf(),
       dateFinish: moment(formData.get(`event-end-time`), DateFormat.DATE_TIME).valueOf(),
-      price: formData.get(`event-price`),
+      price: Number(formData.get(`event-price`)),
       additionalOptions: addOptions,
       isFavourite: Boolean(formData.get(`event-favourite`)),
       toRAW() {
@@ -122,7 +123,7 @@ class PointController {
           'date_from': this.dateStart,
           'date_to': this.dateFinish,
           'offers': this.additionalOptions,
-          'is_favourite': this.isFavourite
+          'is_favorite': this.isFavourite
         };
       }
     };

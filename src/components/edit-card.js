@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
-import {DateFormat, Key} from '../utils.js';
+import {DateFormat, Key, transformFirstLetter} from '../utils.js';
 
 class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
@@ -37,33 +37,56 @@ class EditCard extends AbstractComponent {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Transfer</legend>
-              ${this._transportTypes.map((type) =>
-                `<div class="event__type-item">
-                  <input id="event-type-${type}-1" class="event__type-input
-                  visually-hidden" type="radio" name="event-type" value="${type}">
-                  <label class="event__type-label  event__type-label--${type}"
-                  for="event-type-${type}-1">${type}</label>
-                </div>`
-              ).join(``)}
-            </fieldset>
-
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Activity</legend>
-              ${this._placeTypes.map((type) =>
-                `<div class="event__type-item">
-                  <input id="event-type-${type}-1" class="event__type-input
-                  visually-hidden" type="radio" name="event-type" value="${type}">
-                  <label class="event__type-label  event__type-label--${type}"
-                  for="event-type-${type}-1">${type}</label>
-                </div>`
-              ).join(``)}
-            </fieldset>
+              <div class="event__type-item">
+                  <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" data-placeholder="to" checked>
+                  <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
+                </div>
+              </fieldset>
+              <fieldset class="event__type-group">
+                <legend class="visually-hidden">Activity</legend>
+                <div class="event__type-item">
+                  <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" data-placeholder="in">
+                  <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" data-placeholder="in">
+                  <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" data-placeholder="in">
+                  <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
+                </div>
+              </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${this._type}
+            ${transformFirstLetter(this._type)}
           </label>
           <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"

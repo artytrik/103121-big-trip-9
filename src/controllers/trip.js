@@ -63,8 +63,7 @@ class TripController {
     }
 
     const defaultPoint = {
-      type: [`Bus`],
-      city: [],
+      type: `taxi`,
       destination: {
         name: ``,
         pictures: [],
@@ -73,7 +72,8 @@ class TripController {
       dateStart: new Date(),
       dateFinish: new Date(),
       price: 0,
-      additionalOptions: []
+      additionalOptions: [],
+      isFavourite: false,
     };
 
     this._creatingPoint = new PointController(this._tripContainer,
@@ -142,7 +142,7 @@ class TripController {
         this._renderDays(this._points);
         break;
       case SortType.TIME:
-        const sortedByTime = this._points.slice().sort((a, b) => a.dateStart - b.dateFinish);
+        const sortedByTime = this._points.slice().sort((a, b) => a.dateStart - b.dateStart);
         this._renderDays(sortedByTime);
         break;
       case SortType.PRICE:

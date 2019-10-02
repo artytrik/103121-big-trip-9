@@ -1,9 +1,9 @@
 import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
-import {DateFormat} from '../utils.js';
+import {DateFormat, transformFirstLetter, getTimeDifference} from '../utils.js';
 
 class Card extends AbstractComponent {
-  constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions, id}) {
+  constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions, id}, transportTypes) {
     super();
     this._type = type;
     this._city = name;
@@ -21,7 +21,7 @@ class Card extends AbstractComponent {
         <img class="event__type-icon" width="42" height="42"
         src="img/icons/${this._type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${this._type} to ${this._city}</h3>
+      <h3 class="event__title">${transformFirstLetter(this._type)} to ${this._city}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
@@ -33,7 +33,7 @@ class Card extends AbstractComponent {
             .format(DateFormat.YEAR_MONTH_DAY)}T${moment(this._dateFinish).format(DateFormat.YEAR_MONTH_DAY)}">
           ${moment(this._dateFinish).format(DateFormat.HOURS_MINUTES)}</time>
         </p>
-        <p class="event__duration">${moment(this._dateFinish - this._dateStart).format(DateFormat.HOURS_MINUTES)}</p>
+        <p class="event__duration">${getTimeDifference(this._dateStart, this._dateFinish)}</p>
       </div>
 
       <p class="event__price">

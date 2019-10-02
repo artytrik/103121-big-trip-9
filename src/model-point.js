@@ -27,7 +27,7 @@ class ModelPoint {
       'date_from': this.dateStart,
       'date_to': this.dateFinish,
       'offers': this.additionalOptions,
-      'is_favourite': this.isFavourite
+      'is_favorite': this.isFavourite
     };
   }
 };
