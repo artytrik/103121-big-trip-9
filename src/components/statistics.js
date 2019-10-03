@@ -2,6 +2,7 @@ import AbstractComponent from './abstract-component.js';
 import Chart from 'chart.js';
 import moment from 'moment';
 import ChartDataLabels from 'chartjs-plugin-datalabels';
+import {TRANSPORT_TYPES} from '../utils.js';
 
 class Statistics extends AbstractComponent {
   constructor() {
@@ -111,7 +112,8 @@ class Statistics extends AbstractComponent {
   }
 
   _renderTransportStat() {
-    const transportLabels = [...new Set(this._points.map(({type}) => type))];
+    const transportLabels = [...new Set(this._points.map(({type}) => type)
+        .filter((type) => TRANSPORT_TYPES.includes(type)))];
     const transportData = transportLabels.reduce((acc, label) => {
       const transportNumber = this._points.filter(({type}) => type === label).length;
       acc.push(transportNumber);

@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
-import {DateFormat, Key, transformFirstLetter} from '../utils.js';
+import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES} from '../utils.js';
 
 class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
@@ -19,6 +19,8 @@ class EditCard extends AbstractComponent {
     this._id = id;
     this._transportTypes = transportTypes;
     this._placeTypes = placeTypes;
+
+    this._setCurrentTypeChecked();
   }
 
   getTemplate() {
@@ -86,7 +88,7 @@ class EditCard extends AbstractComponent {
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${transformFirstLetter(this._type)}
+            ${transformFirstLetter(this._type)} ${TRANSPORT_TYPES.includes(this._type) ? `to` : `in`}
           </label>
           <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"
@@ -174,6 +176,16 @@ class EditCard extends AbstractComponent {
       </section>
     </form>
   </li>`;
+  }
+
+  _setCurrentTypeChecked() {
+    const foundElement = Array.from(this.getElement()
+        .querySelectorAll(`input[name="event-type"]`))
+        .find((eventType) => eventType.value === this._type);
+
+    if (foundElement) {
+      foundElement.checked = true;
+    }
   }
 
   _subscribeOnEvents() {

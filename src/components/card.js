@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
-import {DateFormat, transformFirstLetter, getTimeDifference} from '../utils.js';
+import {DateFormat, transformFirstLetter, getTimeDifference, TRANSPORT_TYPES} from '../utils.js';
 
 class Card extends AbstractComponent {
   constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions, id}, transportTypes) {
@@ -21,7 +21,9 @@ class Card extends AbstractComponent {
         <img class="event__type-icon" width="42" height="42"
         src="img/icons/${this._type}.png" alt="Event type icon">
       </div>
-      <h3 class="event__title">${transformFirstLetter(this._type)} to ${this._city}</h3>
+      <h3 class="event__title">${transformFirstLetter(this._type)}
+        ${TRANSPORT_TYPES.includes(this._type) ? `to` : `in`}
+      ${this._city}</h3>
 
       <div class="event__schedule">
         <p class="event__time">
