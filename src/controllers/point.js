@@ -42,14 +42,16 @@ class PointController {
       allowInput: false,
       defaultDate: moment(this._data.dateStart).format(DateFormat.DATE_TIME),
       dateFormat: `d/m/y H:i`,
-      enableTime: true
+      enableTime: true,
+      ['time_24hr']: true
     });
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-end-time-1`), {
       allowInput: false,
       defaultDate: moment(this._data.dateFinish).format(DateFormat.DATE_TIME),
       dateFormat: DateFormat.DATE_TIME_FLATPICKR,
-      enableTime: true
+      enableTime: true,
+      ['time_24hr']: true
     });
 
     this._pointView.getElement()
