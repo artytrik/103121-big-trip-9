@@ -164,7 +164,7 @@ class TripController {
         break;
       case SortType.TIME:
         const sortedByTime = this._points.slice().sort((a, b) =>
-            ((b.dateFinish - b.dateStart) -(a.dateFinish - a.dateStart)));
+          ((b.dateFinish - b.dateStart) - (a.dateFinish - a.dateStart)));
         this._renderBySort(sortedByTime);
         break;
       case SortType.PRICE:

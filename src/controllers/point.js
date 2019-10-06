@@ -13,7 +13,7 @@ class PointController {
     this._data = data;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
-    this._pointView = new Card(data, TRANSPORT_TYPES);
+    this._pointView = new Card(data);
     this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES, additionalOptions);
     this.init(mode);
   }
@@ -42,16 +42,14 @@ class PointController {
       allowInput: false,
       defaultDate: moment(this._data.dateStart).format(DateFormat.DATE_TIME),
       dateFormat: `d/m/y H:i`,
-      enableTime: true,
-      time_24hr: true
+      enableTime: true
     });
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-end-time-1`), {
       allowInput: false,
       defaultDate: moment(this._data.dateFinish).format(DateFormat.DATE_TIME),
       dateFormat: DateFormat.DATE_TIME_FLATPICKR,
-      enableTime: true,
-      time_24hr: true
+      enableTime: true
     });
 
     this._pointView.getElement()
@@ -64,13 +62,13 @@ class PointController {
     this._pointEdit.getElement()
       .querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, () => {
-      if (mode === Mode.ADDING) {
+        if (mode === Mode.ADDING) {
           unrender(this._pointEdit.getElement());
           this._pointEdit.removeElement();
           this._onDataChange(null, null);
         } else if (mode === Mode.DEFAULT) {
-        this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
-        document.removeEventListener(`keydown`, onEscKeyDown);
+          this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+          document.removeEventListener(`keydown`, onEscKeyDown);
         }
       });
 
@@ -79,7 +77,7 @@ class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        const entry = this._getNewData()
+        const entry = this._getNewData();
 
         this.block(`save`, true);
         setTimeout(this._onDataChange.bind(this,
@@ -154,18 +152,18 @@ class PointController {
       }
     };
     return entry;
-  };
+  }
 
   shake() {
     const ANIMATION_TIMEOUT = 600;
-    this._pointEdit.getElement().style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`
+    this._pointEdit.getElement().style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
 
     setTimeout(() => {
-      this._pointEdit.getElement().style.animation = ``
+      this._pointEdit.getElement().style.animation = ``;
     }, ANIMATION_TIMEOUT);
   }
 
-  block(buttonValue,isDisabled) {
+  block(buttonValue, isDisabled) {
     const saveButton = this._pointEdit.getElement().querySelector(`.event__save-btn`);
     const deleteButton = this._pointEdit.getElement().querySelector(`.event__reset-btn`);
 
@@ -207,7 +205,7 @@ class PointController {
   setDefaultView() {
     if (this._container.getElement().contains(this._pointEdit.getElement())) {
       this._container.getElement().replaceChild(this._pointView.getElement(),
-      this._pointEdit.getElement());
+          this._pointEdit.getElement());
     }
   }
 }

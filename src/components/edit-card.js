@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
-import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES, TRIP_TYPES} from '../utils.js';
+import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES} from '../utils.js';
 
 class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
@@ -166,7 +166,7 @@ class EditCard extends AbstractComponent {
     </div>
         </section>
 
-        <section class="event__section  event__section--destination ${this._city ? ``: `visually-hidden`}">
+        <section class="event__section  event__section--destination ${this._city ? `` : `visually-hidden`}">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${this._description}</p>
 

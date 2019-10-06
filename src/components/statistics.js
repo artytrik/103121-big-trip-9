@@ -128,7 +128,7 @@ class Statistics extends AbstractComponent {
     const timeSpendData = timeSpendLabels.reduce((acc, label) => {
       const pointsByLabel = this._points.filter(({type}) => type === label);
       const labelTime = pointsByLabel.reduce((sum, {dateStart, dateFinish}) =>
-          sum + (dateFinish - dateStart), 0);
+        sum + (dateFinish - dateStart), 0);
       const hoursCount = Math.floor(moment.duration(labelTime).asHours());
       acc.push(hoursCount);
       return acc;
