@@ -83,11 +83,11 @@ const onDataChange = (actionType, update, onError) => {
 
 api.getData({url: `destinations`})
   .then((destinations) => {
-    tripDestinations = destinations
+    tripDestinations = destinations;
   })
   .then(() => api.getData({url: `offers`}))
   .then((offers) => {
-    tripAdditionalOptions = offers
+    tripAdditionalOptions = offers;
   })
   .then(() => api.getPoints())
   .then((points) => {
