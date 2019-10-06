@@ -30,6 +30,6 @@ class ModelPoint {
       'is_favorite': this.isFavourite
     };
   }
-};
+}
 
 export default ModelPoint;
