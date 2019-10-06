@@ -7,14 +7,14 @@ import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
 class PointController {
-  constructor(container, data, mode, onDataChange, onChangeView, destinations) {
+  constructor(container, data, mode, onDataChange, onChangeView, destinations, additionalOptions) {
     this._container = container;
+    console.log(this._container);
     this._data = data;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
     this._pointView = new Card(data, TRANSPORT_TYPES);
-    this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES);
-
+    this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES, additionalOptions);
     this.init(mode);
   }
 
@@ -29,12 +29,8 @@ class PointController {
 
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE_IE || evt.key === Key.ESCAPE) {
-        if (mode === Mode.DEFAULT) {
-          if (this._container.contains(this._pointEdit.getElement())) {
-            this._container.replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
-          }
-        } else if (mode === Mode.ADDING) {
-          this._container.removeChild(currentView.getElement());
+        if (this._pointEdit.getElement().parentElement === this._container) {
+          this._container.replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
         }
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
@@ -44,14 +40,16 @@ class PointController {
       allowInput: false,
       defaultDate: moment(this._data.dateStart).format(DateFormat.DATE_TIME),
       dateFormat: `d/m/y H:i`,
-      enableTime: true
+      enableTime: true,
+      time_24hr: true
     });
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-end-time-1`), {
       allowInput: false,
       defaultDate: moment(this._data.dateFinish).format(DateFormat.DATE_TIME),
       dateFormat: DateFormat.DATE_TIME_FLATPICKR,
-      enableTime: true
+      enableTime: true,
+      time_24hr: true
     });
 
     this._pointView.getElement()
@@ -59,6 +57,13 @@ class PointController {
       .addEventListener(`click`, () => {
         this._container.getElement().replaceChild(this._pointEdit.getElement(), this._pointView.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
+      });
+
+    this._pointEdit.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, () => {
+        this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+        document.removeEventListener(`keydown`, onEscKeyDown);
       });
 
     this._pointEdit.getElement()

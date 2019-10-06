@@ -79,7 +79,7 @@ class TripController {
     this._onChangeView();
 
     this._creatingPoint = new PointController(this._tripContainer,
-        defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView, this._destinations);
+        defaultPoint, PointControllerMode.ADDING, this._onDataChange, this._onChangeView, this._destinations, this._additionalOptions);
   }
 
   _renderBoard() {
@@ -92,7 +92,7 @@ class TripController {
 
   _renderPoints(container, point) {
     const pointController = new PointController(container,
-        point, PointControllerMode.DEFAULT, this._onDataChange, this._onChangeView, this._destinations);
+        point, PointControllerMode.DEFAULT, this._onDataChange, this._onChangeView, this._destinations, this._additionalOptions);
     this._subscriptions.push(pointController.setDefaultView.bind(pointController));
   }
 

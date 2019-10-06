@@ -1,10 +1,10 @@
 import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
-import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES} from '../utils.js';
+import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES, TRIP_TYPES} from '../utils.js';
 
 class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
-    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations, transportTypes, placeTypes) {
+    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations, transportTypes, placeTypes, offersWithTypes) {
     super();
     this._type = type;
     this._dateStart = new Date(dateStart);
@@ -19,8 +19,12 @@ class EditCard extends AbstractComponent {
     this._id = id;
     this._transportTypes = transportTypes;
     this._placeTypes = placeTypes;
+    this._offersWithTypes = offersWithTypes;
 
     this._setCurrentTypeChecked();
+    this._setNumbersOnly();
+    this._changeOptionsByType();
+    this._changeDescByCity();
   }
 
   getTemplate() {
@@ -193,6 +197,71 @@ class EditCard extends AbstractComponent {
       .querySelector(`.event__type-input`).addEventListener(`keydown`, (evt) => {
         if (evt.key === Key.ENTER) {
           evt.preventDefault();
+        }
+      });
+  }
+
+  _setNumbersOnly() {
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, (evt) => {
+        evt.target.value = evt.target.value.replace(/[^\d]/g, ``);
+      });
+  }
+
+  _changeOptionsByType() {
+    this.getElement()
+      .querySelectorAll(`.event__type-input`)
+      .forEach((typeItem) => {
+        typeItem.addEventListener(`click`, (evt) => {
+          const target = evt.currentTarget;
+          const typeData = this._offersWithTypes.find(({type}) => type === target.value);
+
+          this.getElement().querySelector(`.event__type-icon`).src = `img/icons/${typeData.type}.png`;
+          this.getElement().querySelector(`.event__type-output`).textContent = `${transformFirstLetter(typeData.type)} ${TRANSPORT_TYPES.includes(typeData.type) ? `to` : `in`}`;
+          this.getElement().querySelector(`.event__type-toggle`).checked = false;
+
+          this.getElement().querySelector(`.event__available-offers`).innerHTML = ``;
+
+          if (typeData.offers.length === 0) {
+            this.getElement().querySelector(`.event__section--offers`).classList.add(`visually-hidden`);
+            return;
+          } else {
+            this.getElement().querySelector(`.event__section--offers`).classList.remove(`visually-hidden`);
+          }
+
+          this.getElement().querySelector(`.event__available-offers`).insertAdjacentHTML(`beforeend`,
+              `${typeData.offers.map(({name, price}) => `<div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="${name}-1" type="checkbox" name="${name}">
+                <label class="event__offer-label" for="${name}-1">
+                  <span class="event__offer-title">${name}</span>
+                  &plus;
+                  &euro;&nbsp;<span class="event__offer-price">${price}</span>
+                </label>
+              </div>`).join(``)}`);
+        });
+      });
+  }
+
+  _changeDescByCity() {
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, (evt) => {
+        const target = evt.currentTarget;
+        const destinationImages = this.getElement().querySelector(`.event__photos-tape`);
+        const destinationDescription = this.getElement().querySelector(`.event__destination-description`);
+        const destinationContainer = this.getElement().querySelector(`.event__section--destination`);
+        const cityData = this._destinations.find(({name}) => name === target.value);
+
+        destinationImages.innerHTML = ``;
+
+        if (cityData) {
+          destinationDescription.textContent = cityData.description;
+          destinationContainer.classList.remove(`visually-hidden`);
+          destinationImages.insertAdjacentHTML(`beforeend`, cityData.pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join(``));
+        } else {
+          destinationDescription.textContent = ``;
+          destinationContainer.classList.add(`visually-hidden`);
         }
       });
   }

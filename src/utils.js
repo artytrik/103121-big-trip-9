@@ -44,8 +44,11 @@ export const ActionType = {
   CREATE: `create`,
 }
 
+export const MAX_CITIES_LENGTH = 3;
+
 export const TRANSPORT_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`];
 export const PLACE_TYPES = [`check-in`, `sightseeing`, `restaurant`];
+export const TRIP_TYPES = [`taxi`, `bus`, `train`, `ship`, `transport`, `drive`, `flight`, `check-in`, `sightseeing`, `restaurant`];
 
 export const createElement = (template) => {
   const newElement = document.createElement(`div`);
