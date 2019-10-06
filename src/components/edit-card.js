@@ -96,7 +96,7 @@ class EditCard extends AbstractComponent {
           </label>
           <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"
-          value="${this._city}" list="destination-list-1">
+          value="${this._city}" list="destination-list-1" onkeypress="return false">
           <datalist id="destination-list-1">
             ${this._destinations.map(({name}) => `<option value="${name}"></option>`).join(``)}
           </datalist>
@@ -148,7 +148,7 @@ class EditCard extends AbstractComponent {
 
       <section class="event__details">
 
-        <section class="event__section  event__section--offers">
+        <section class="event__section  event__section--offers ${this._additionalOptions.length > 0 ? `` : `visually-hidden`}"">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
@@ -166,7 +166,7 @@ class EditCard extends AbstractComponent {
     </div>
         </section>
 
-        <section class="event__section  event__section--destination">
+        <section class="event__section  event__section--destination ${this._city ? ``: `visually-hidden`}">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${this._description}</p>
 

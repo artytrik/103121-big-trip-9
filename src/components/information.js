@@ -7,7 +7,7 @@ class Information extends AbstractComponent {
     super();
     this._cities = cities;
     this._dateStart = dateStart;
-    this._dateFinish = this._dateFinish;
+    this._dateFinish = dateFinish;
   }
 
   getTemplate() {

@@ -43,7 +43,13 @@ const onDataChange = (actionType, update, onError) => {
         id: update.id
       })
         .then(() => api.getPoints())
-        .then((points) => tripController.show(points));
+        .then((points) => {
+          tripController.show(points);
+          tripController.updateData(points);
+        })
+        .catch (() => {
+          onError();
+        });
       break;
     case ActionType.UPDATE:
       api.updatePoint({
@@ -51,7 +57,10 @@ const onDataChange = (actionType, update, onError) => {
         data: update.toRAW()
       })
       .then(() => api.getPoints())
-      .then((points) => tripController.show(points))
+      .then((points) => {
+        tripController.show(points);
+        tripController.updateData(points);
+      })
       .catch (() => {
         onError();
       });
@@ -61,7 +70,13 @@ const onDataChange = (actionType, update, onError) => {
         data: update.toRAW()
       })
       .then(() => api.getPoints())
-      .then((points) => tripController.show(points));
+      .then((points) => {
+        tripController.show(points);
+        tripController.updateData(points);
+      })
+      .catch (() => {
+        onError();
+      });
       break;
   }
 };

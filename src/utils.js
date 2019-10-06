@@ -88,7 +88,7 @@ export const getInformation = (points) => {
   return {
     cities: points.map(({destination: {name}}) => name),
     dateStart: points[0].dateStart,
-    dateFinish: points[getTripCost.length - 1].dateFinish
+    dateFinish: points[points.length - 1].dateFinish
   }
 }
 

@@ -2,7 +2,8 @@ import TripContainer from '../components/trip-container.js';
 import CardsContainer from '../components/cards-container.js';
 import DayInformation from '../components/day-information.js';
 import EmptyResult from '../components/empty-result.js';
-import {render, unrender, Position, Mode as PointControllerMode, SortType, FilterType} from '../utils.js';
+import Information from '../components/information.js';
+import {render, unrender, Position, Mode as PointControllerMode, SortType, FilterType, getTripCost, getInformation} from '../utils.js';
 import Day from '../components/day.js';
 import Sort from '../components/sort.js';
 import PointController from './point.js';
@@ -63,11 +64,11 @@ class TripController {
     }
 
     const defaultPoint = {
-      type: `taxi`,
+      type: `Taxi`,
       destination: {
-        description: `Напишите`,
+        description: ``,
         pictures: [],
-        name: `Vladivostok`,
+        name: ``,
       },
       dateStart: new Date(),
       dateFinish: new Date(),
@@ -86,6 +87,7 @@ class TripController {
     unrender(this._tripContainer.getElement());
 
     this._tripContainer.removeElement();
+    this._subscriptions.length = 0;
     render(this._container, this._tripContainer.getElement(), Position.BEFOREEND);
     this._renderDays(this._points);
   }
@@ -135,6 +137,22 @@ class TripController {
     this._onDataChangeServer(actionType, update, onError);
   }
 
+  _renderBySort(sortedPoints) {
+    const day = new Day();
+    const dayInformation = new DayInformation();
+    const cardsContainer = new CardsContainer();
+
+    render(this._tripContainer.getElement(), day.getElement(), Position.BEFOREEND);
+    render(day.getElement(), dayInformation.getElement(), Position.BEFOREEND);
+    render(day.getElement(), cardsContainer.getElement(), Position.BEFOREEND);
+
+    dayInformation.getElement().querySelector(`.day__counter`).textContent = ``;
+    dayInformation.getElement().querySelector(`.day__date`).textContent = ``;
+    dayInformation.getElement().querySelector(`.day__date`).value = ``;
+
+    sortedPoints.forEach((point) => this._renderPoints(cardsContainer, point));
+  }
+
   _onSortLinkClick(evt) {
     evt.preventDefault();
 
@@ -145,12 +163,13 @@ class TripController {
         this._renderDays(this._points);
         break;
       case SortType.TIME:
-        const sortedByTime = this._points.slice().sort((a, b) => a.dateStart - b.dateStart);
-        this._renderDays(sortedByTime);
+        const sortedByTime = this._points.slice().sort((a, b) =>
+            ((b.dateFinish - b.dateStart) -(a.dateFinish - a.dateStart)));
+        this._renderBySort(sortedByTime);
         break;
       case SortType.PRICE:
-        const sortedByPrice = this._points.slice().sort((a, b) => a.price - b.price);
-        this._renderDays(sortedByPrice);
+        const sortedByPrice = this._points.slice().sort((a, b) => b.price - a.price);
+        this._renderBySort(sortedByPrice);
         break;
     }
   }
@@ -173,6 +192,18 @@ class TripController {
         this._renderDays(filterPastPoints);
         break;
     }
+  }
+
+  updateData(points) {
+    const informationParent = document.querySelector(`.trip-main__trip-info`);
+    const tripCost = document.querySelector(`.trip-info__cost-value`);
+    const informationContainer = document.querySelector(`.trip-info__main`);
+    const sortedPoints = getInformation(points.slice().sort((a, b) => a.dateStart - b.dateFinish));
+    const information = new Information(sortedPoints);
+
+    informationParent.removeChild(informationContainer);
+    render(informationParent, information.getElement(), Position.AFTERBEGIN);
+    tripCost.textContent = getTripCost(points);
   }
 }
 

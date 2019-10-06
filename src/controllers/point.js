@@ -1,4 +1,4 @@
-import {Position, render, Mode, DateFormat, Key, TRANSPORT_TYPES, PLACE_TYPES} from '../utils.js';
+import {Position, render, unrender, Mode, DateFormat, Key, TRANSPORT_TYPES, PLACE_TYPES} from '../utils.js';
 import Card from '../components/card.js';
 import EditCard from '../components/edit-card.js';
 import moment from 'moment';
@@ -6,10 +6,10 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
+const DELAY = 1000;
 class PointController {
   constructor(container, data, mode, onDataChange, onChangeView, destinations, additionalOptions) {
     this._container = container;
-    console.log(this._container);
     this._data = data;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
@@ -25,6 +25,8 @@ class PointController {
     if (mode === Mode.ADDING) {
       renderPosition = Position.AFTERBEGIN;
       currentView = this._pointEdit;
+      this._pointEdit.getElement().querySelector(`.event__reset-btn`).textContent = `Cancel`;
+      this._pointEdit.getElement().querySelector(`.event__favorite-btn`).classList.add(`visually-hidden`);
     }
 
     const onEscKeyDown = (evt) => {
@@ -62,8 +64,14 @@ class PointController {
     this._pointEdit.getElement()
       .querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, () => {
+      if (mode === Mode.ADDING) {
+          unrender(this._pointEdit.getElement());
+          this._pointEdit.removeElement();
+          this._onDataChange(null, null);
+        } else if (mode === Mode.DEFAULT) {
         this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
         document.removeEventListener(`keydown`, onEscKeyDown);
+        }
       });
 
     this._pointEdit.getElement()
@@ -71,9 +79,16 @@ class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        this.block();
+        const entry = this._getNewData()
 
-        this._onDataChange(mode === Mode.DEFAULT ? `update` : `create`, this._getNewData());
+        this.block(`save`, true);
+        setTimeout(this._onDataChange.bind(this,
+            mode === Mode.DEFAULT ? `update` : `create`,
+            entry,
+            () => {
+              this.onError();
+            }),
+        DELAY);
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
@@ -82,10 +97,14 @@ class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
+        this.block(`delete`, true);
+
         if (mode === Mode.ADDING) {
+          unrender(this._pointEdit.getElement());
+          this._pointEdit.removeElement();
           this._onDataChange(null, null);
         } else if (mode === Mode.DEFAULT) {
-          this._onDataChange(`delete`, this._data);
+          setTimeout(this._onDataChange.bind(this, `delete`, this._data), DELAY);
         }
       });
 
@@ -146,12 +165,43 @@ class PointController {
     }, ANIMATION_TIMEOUT);
   }
 
-  block() {
+  block(buttonValue,isDisabled) {
     const saveButton = this._pointEdit.getElement().querySelector(`.event__save-btn`);
     const deleteButton = this._pointEdit.getElement().querySelector(`.event__reset-btn`);
 
-    saveButton.disabled = true;
-    deleteButton.disabled = true;
+    const setDisabledValue = (element, selector) => {
+      element.querySelectorAll(selector).forEach((input) => {
+        input.disabled = isDisabled;
+      });
+    };
+
+    this._pointEdit.getElement().querySelector(`.event--edit`).style.border = ``;
+
+    this._pointEdit.getElement().querySelector(`.event__type-toggle`).disabled = isDisabled;
+    this._pointEdit.getElement().querySelector(`.event__favorite-checkbox`).disabled = isDisabled;
+    this._pointEdit.getElement().querySelector(`.event__rollup-btn`).disabled = isDisabled;
+    setDisabledValue(this._pointEdit.getElement(), `.event__input`);
+    setDisabledValue(this._pointEdit.getElement(), `.event__offer-checkbox`);
+    saveButton.disabled = isDisabled;
+    deleteButton.disabled = isDisabled;
+
+    if (isDisabled) {
+      if (buttonValue === `save`) {
+        saveButton.textContent = `Saving...`;
+      } else {
+        deleteButton.textContent = `Deleting...`;
+      }
+    } else {
+      saveButton.textContent = `Save`;
+      deleteButton.textContent = `Delete`;
+    }
+  }
+
+  onError() {
+    this.shake();
+    this.block(null, false);
+    this._pointEdit.getElement().querySelector(`.event--edit`).style.border = `3px solid red`;
+    document.addEventListener(`keydown`, this._onEscKeyDown);
   }
 
   setDefaultView() {
