@@ -18,19 +18,19 @@ export const DateFormat = {
   DAY_MONTH: `DD MMM`,
   DATE_TIME: `DD/MM/YY HH:mm`,
   DATE_TIME_FLATPICKR: `d/m/y H:i`,
-}
+};
 
 export const Key = {
   ENTER: `Enter`,
   ESCAPE_IE: `Escape`,
   ESCAPE: `Esc`,
-}
+};
 
 export const SortType = {
   EVENT: `event`,
   TIME: `time`,
   PRICE: `price`,
-}
+};
 
 export const FilterType = {
   EVERYTHING: `filter-everything`,
@@ -42,7 +42,7 @@ export const ActionType = {
   DELETE: `delete`,
   UPDATE: `update`,
   CREATE: `create`,
-}
+};
 
 export const MAX_CITIES_LENGTH = 3;
 
