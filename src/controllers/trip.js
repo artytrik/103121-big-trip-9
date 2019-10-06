@@ -72,7 +72,7 @@ class TripController {
       },
       dateStart: new Date(),
       dateFinish: new Date(),
-      price: 0,
+      basePrice: 0,
       additionalOptions: [],
       isFavourite: false,
     };
@@ -168,7 +168,7 @@ class TripController {
         this._renderBySort(sortedByTime);
         break;
       case SortType.PRICE:
-        const sortedByPrice = this._points.slice().sort((a, b) => b.price - a.price);
+        const sortedByPrice = this._points.slice().sort((a, b) => b.basePrice - a.basePrice);
         this._renderBySort(sortedByPrice);
         break;
     }

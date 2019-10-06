@@ -37,7 +37,7 @@ render(tripControlsHeaderElements[1], filtersElement.getElement(), Position.AFTE
 render(pageBodyContainer, statistics.getElement(), Position.BEFOREEND);
 
 const onDataChange = (actionType, update, onError) => {
-  switch(actionType) {
+  switch (actionType) {
     case ActionType.DELETE:
       api.deletePoint({
         id: update.id
@@ -47,7 +47,7 @@ const onDataChange = (actionType, update, onError) => {
           tripController.show(points);
           tripController.updateData(points);
         })
-        .catch (() => {
+        .catch(() => {
           onError();
         });
       break;
@@ -61,7 +61,7 @@ const onDataChange = (actionType, update, onError) => {
         tripController.show(points);
         tripController.updateData(points);
       })
-      .catch (() => {
+      .catch(() => {
         onError();
       });
       break;
@@ -74,7 +74,7 @@ const onDataChange = (actionType, update, onError) => {
         tripController.show(points);
         tripController.updateData(points);
       })
-      .catch (() => {
+      .catch(() => {
         onError();
       });
       break;
@@ -82,13 +82,17 @@ const onDataChange = (actionType, update, onError) => {
 };
 
 api.getData({url: `destinations`})
-  .then((destinations) => tripDestinations = destinations)
+  .then((destinations) => {
+    tripDestinations = destinations
+  })
   .then(() => api.getData({url: `offers`}))
-  .then((offers) => tripAdditionalOptions = offers)
+  .then((offers) => {
+    tripAdditionalOptions = offers
+  })
   .then(() => api.getPoints())
   .then((points) => {
     pointsData = points;
-    pointsInformation = getInformation(points.slice().sort((a,b) => a - b));
+    pointsInformation = getInformation(points.slice().sort((a, b) => a - b));
   })
   .then(() => {
     tripController = new TripController(tripEventsElement, pointsData, tripDestinations, tripAdditionalOptions, onDataChange);

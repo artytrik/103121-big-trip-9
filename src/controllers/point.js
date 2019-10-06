@@ -137,7 +137,7 @@ class PointController {
       },
       dateStart: moment(formData.get(`event-start-time`), DateFormat.DATE_TIME).valueOf(),
       dateFinish: moment(formData.get(`event-end-time`), DateFormat.DATE_TIME).valueOf(),
-      price: Number(formData.get(`event-price`)),
+      basePrice: Number(formData.get(`event-price`)),
       additionalOptions: addOptions,
       isFavourite: Boolean(formData.get(`event-favorite`)),
       toRAW() {
@@ -145,7 +145,7 @@ class PointController {
           'id': this.id,
           'type': this.type,
           'destination': this.destination,
-          'base_price': this.price,
+          'base_price': this.basePrice,
           'date_from': this.dateStart,
           'date_to': this.dateFinish,
           'offers': this.additionalOptions,

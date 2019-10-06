@@ -3,7 +3,7 @@ class ModelPoint {
     this.id = data[`id`];
     this.type = data[`type`];
     this.destination = data[`destination`];
-    this.price = data[`base_price`];
+    this.basePrice = data[`base_price`];
     this.dateStart = new Date(data[`date_from`]);
     this.dateFinish = new Date(data[`date_to`]);
     this.additionalOptions = data[`offers`] || [];
@@ -23,13 +23,13 @@ class ModelPoint {
       'id': this.id,
       'type': this.type,
       'destination': this.destination,
-      'base_price': this.price,
+      'base_price': this.basePrice,
       'date_from': this.dateStart,
       'date_to': this.dateFinish,
       'offers': this.additionalOptions,
       'is_favorite': this.isFavourite
     };
   }
-};
+}
 
 export default ModelPoint;
