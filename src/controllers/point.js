@@ -1,22 +1,20 @@
-import {Position} from '../utils.js';
-import {Card} from '../components/card.js';
-import {EditCard} from '../components/edit-card.js';
-import {render} from '../utils.js';
-import moment from "moment";
+import {Position, render, unrender, Mode, DateFormat, Key, TRANSPORT_TYPES, PLACE_TYPES} from '../utils.js';
+import Card from '../components/card.js';
+import EditCard from '../components/edit-card.js';
+import moment from 'moment';
 import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
-import {Mode} from '../utils.js';
 
-export class PointController {
-  constructor(container, data, mode, onDataChange, onChangeView, destinations) {
+const DELAY = 1000;
+class PointController {
+  constructor(container, data, mode, onDataChange, onChangeView, destinations, additionalOptions) {
     this._container = container;
     this._data = data;
     this._onChangeView = onChangeView;
     this._onDataChange = onDataChange;
     this._pointView = new Card(data);
-    this._pointEdit = new EditCard(data, destinations);
-
+    this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES, additionalOptions);
     this.init(mode);
   }
 
@@ -27,35 +25,33 @@ export class PointController {
     if (mode === Mode.ADDING) {
       renderPosition = Position.AFTERBEGIN;
       currentView = this._pointEdit;
+      this._pointEdit.getElement().querySelector(`.event__reset-btn`).textContent = `Cancel`;
+      this._pointEdit.getElement().querySelector(`.event__favorite-btn`).classList.add(`visually-hidden`);
     }
 
     const onEscKeyDown = (evt) => {
-      if (evt.key === `Escape` || evt.key === `Esc`) {
-        if (mode === Mode.DEFAULT) {
-          if (this._container.contains(this._pointEdit.getElement())) {
-            this._container.replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
-          }
-        } else if (mode === Mode.ADDING) {
-          this._container.removeChild(currentView.getElement());
+      if (evt.key === Key.ESCAPE_IE || evt.key === Key.ESCAPE) {
+        if (this._pointEdit.getElement().parentElement === this._container) {
+          this._container.replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
         }
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-start-time-1`), {
-      altInput: true,
-      allowInput: true,
-      defaultDate: moment(this._data.dateStart).format(`DD/MM/YY HH:mm`),
+      allowInput: false,
+      defaultDate: moment(this._data.dateStart).format(DateFormat.DATE_TIME),
       dateFormat: `d/m/y H:i`,
-      enableTime: true
+      enableTime: true,
+      [`time_24hr`]: true
     });
 
     flatpickr(this._pointEdit.getElement().querySelector(`#event-end-time-1`), {
-      altInput: true,
-      allowInput: true,
-      defaultDate: moment(this._data.dateFinish).format(`DD/MM/YY HH:mm`),
-      dateFormat: `d/m/y H:i`,
-      enableTime: true
+      allowInput: false,
+      defaultDate: moment(this._data.dateFinish).format(DateFormat.DATE_TIME),
+      dateFormat: DateFormat.DATE_TIME_FLATPICKR,
+      enableTime: true,
+      [`time_24hr`]: true
     });
 
     this._pointView.getElement()
@@ -66,53 +62,33 @@ export class PointController {
       });
 
     this._pointEdit.getElement()
+      .querySelector(`.event__rollup-btn`)
+      .addEventListener(`click`, () => {
+        if (mode === Mode.ADDING) {
+          unrender(this._pointEdit.getElement());
+          this._pointEdit.removeElement();
+          this._onDataChange(null, null);
+        } else if (mode === Mode.DEFAULT) {
+          this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+          document.removeEventListener(`keydown`, onEscKeyDown);
+        }
+      });
+
+    this._pointEdit.getElement()
       .querySelector(`.event__save-btn`)
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        const formData = new FormData(this._pointEdit.getElement().querySelector(`.event--edit`));
-        const addOptions = Array.from(this._pointEdit.getElement()
-            .querySelectorAll(`.event__offer-selector`)).map((addOption) => {
-          return ({
-            title: addOption.querySelector(`.event__offer-title`).textContent,
-            price: addOption.querySelector(`.event__offer-price`).textContent,
-            accepted: addOption.querySelector(`.event__offer-checkbox`).checked
-          });
-        });
-        const destinationDescription = this._pointEdit.getElement().querySelector(`.event__destination-description`).textContent;
-        const destinationPictures = Array.from(this._pointEdit.getElement().querySelectorAll(`.event__photo`)).map((picture) => ({
-          src: picture.src,
-          description: picture.alt
-        }));
+        const entry = this._getNewData();
 
-        const entry = {
-          id: this._data.id,
-          type: formData.get(`event-type`),
-          destination: {
-            name: formData.get(`event-destination`),
-            description: destinationDescription,
-            pictures: destinationPictures
-          },
-          dateStart: moment(formData.get(`event-start-time`), `DD/MM/YY HH:mm`).valueOf(),
-          dateFinish: moment(formData.get(`event-end-time`), `DD/MM/YY HH:mm`).valueOf(),
-          price: formData.get(`event-price`),
-          additionalOptions: addOptions,
-          isFavourite: Boolean(formData.get(`event-favourite`)),
-          toRAW() {
-            return {
-              'id': this.id,
-              'type': this.type,
-              'destination': this.destination,
-              'base_price': this.price,
-              'date_from': this.dateStart,
-              'date_to': this.dateFinish,
-              'offers': this.additionalOptions,
-              'is_favourite': this.isFavourite
-            };
-          }
-        };
-
-        this._onDataChange(mode === Mode.DEFAULT ? `update` : `create`, entry);
+        this.block(`save`, true);
+        setTimeout(this._onDataChange.bind(this,
+            mode === Mode.DEFAULT ? `update` : `create`,
+            entry,
+            () => {
+              this.onError();
+            }),
+        DELAY);
 
         document.removeEventListener(`keydown`, onEscKeyDown);
       });
@@ -121,19 +97,119 @@ export class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
+        this.block(`delete`, true);
+
         if (mode === Mode.ADDING) {
+          unrender(this._pointEdit.getElement());
+          this._pointEdit.removeElement();
           this._onDataChange(null, null);
         } else if (mode === Mode.DEFAULT) {
-          this._onDataChange(`delete`, this._data);
+          setTimeout(this._onDataChange.bind(this, `delete`, this._data), DELAY);
         }
       });
 
     render(this._container.getElement(), currentView.getElement(), renderPosition);
   }
 
+  _getNewData() {
+    const formData = new FormData(this._pointEdit.getElement().querySelector(`.event--edit`));
+    const addOptions = Array.from(this._pointEdit.getElement()
+        .querySelectorAll(`.event__offer-selector`)).map((addOption) => {
+      return ({
+        title: addOption.querySelector(`.event__offer-title`).textContent,
+        price: Number(addOption.querySelector(`.event__offer-price`).textContent),
+        accepted: addOption.querySelector(`.event__offer-checkbox`).checked
+      });
+    });
+    const destinationDescription = this._pointEdit.getElement().querySelector(`.event__destination-description`).textContent;
+    const destinationPictures = Array.from(this._pointEdit.getElement().querySelectorAll(`.event__photo`)).map((picture) => ({
+      src: picture.src,
+      description: picture.alt
+    }));
+
+    const entry = {
+      id: this._data.id,
+      type: formData.get(`event-type`),
+      destination: {
+        name: formData.get(`event-destination`),
+        description: destinationDescription,
+        pictures: destinationPictures
+      },
+      dateStart: moment(formData.get(`event-start-time`), DateFormat.DATE_TIME).valueOf(),
+      dateFinish: moment(formData.get(`event-end-time`), DateFormat.DATE_TIME).valueOf(),
+      price: Number(formData.get(`event-price`)),
+      additionalOptions: addOptions,
+      isFavourite: Boolean(formData.get(`event-favorite`)),
+      toRAW() {
+        return {
+          'id': this.id,
+          'type': this.type,
+          'destination': this.destination,
+          'base_price': this.price,
+          'date_from': this.dateStart,
+          'date_to': this.dateFinish,
+          'offers': this.additionalOptions,
+          'is_favorite': this.isFavourite
+        };
+      }
+    };
+    return entry;
+  }
+
+  shake() {
+    const ANIMATION_TIMEOUT = 600;
+    this._pointEdit.getElement().style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
+
+    setTimeout(() => {
+      this._pointEdit.getElement().style.animation = ``;
+    }, ANIMATION_TIMEOUT);
+  }
+
+  block(buttonValue, isDisabled) {
+    const saveButton = this._pointEdit.getElement().querySelector(`.event__save-btn`);
+    const deleteButton = this._pointEdit.getElement().querySelector(`.event__reset-btn`);
+
+    const setDisabledValue = (element, selector) => {
+      element.querySelectorAll(selector).forEach((input) => {
+        input.disabled = isDisabled;
+      });
+    };
+
+    this._pointEdit.getElement().querySelector(`.event--edit`).style.border = ``;
+
+    this._pointEdit.getElement().querySelector(`.event__type-toggle`).disabled = isDisabled;
+    this._pointEdit.getElement().querySelector(`.event__favorite-checkbox`).disabled = isDisabled;
+    this._pointEdit.getElement().querySelector(`.event__rollup-btn`).disabled = isDisabled;
+    setDisabledValue(this._pointEdit.getElement(), `.event__input`);
+    setDisabledValue(this._pointEdit.getElement(), `.event__offer-checkbox`);
+    saveButton.disabled = isDisabled;
+    deleteButton.disabled = isDisabled;
+
+    if (isDisabled) {
+      if (buttonValue === `save`) {
+        saveButton.textContent = `Saving...`;
+      } else {
+        deleteButton.textContent = `Deleting...`;
+      }
+    } else {
+      saveButton.textContent = `Save`;
+      deleteButton.textContent = `Delete`;
+    }
+  }
+
+  onError() {
+    this.shake();
+    this.block(null, false);
+    this._pointEdit.getElement().querySelector(`.event--edit`).style.border = `3px solid red`;
+    document.addEventListener(`keydown`, this._onEscKeyDown);
+  }
+
   setDefaultView() {
     if (this._container.getElement().contains(this._pointEdit.getElement())) {
-      this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+      this._container.getElement().replaceChild(this._pointView.getElement(),
+          this._pointEdit.getElement());
     }
   }
 }
+
+export default PointController;

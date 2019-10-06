@@ -1,9 +1,10 @@
-import {AbstractComponent} from './abstract-component.js';
-import moment from "moment";
+import AbstractComponent from './abstract-component.js';
+import moment from 'moment';
+import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES} from '../utils.js';
 
-export class EditCard extends AbstractComponent {
+class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
-    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations) {
+    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations, transportTypes, placeTypes, offersWithTypes) {
     super();
     this._type = type;
     this._dateStart = new Date(dateStart);
@@ -16,6 +17,14 @@ export class EditCard extends AbstractComponent {
     this._pictures = pictures;
     this._isFavourite = isFavourite;
     this._id = id;
+    this._transportTypes = transportTypes;
+    this._placeTypes = placeTypes;
+    this._offersWithTypes = offersWithTypes;
+
+    this._setCurrentTypeChecked();
+    this._setNumbersOnly();
+    this._changeOptionsByType();
+    this._changeDescByCity();
   }
 
   getTemplate() {
@@ -34,91 +43,60 @@ export class EditCard extends AbstractComponent {
           <div class="event__type-list">
             <fieldset class="event__type-group">
               <legend class="visually-hidden">Transfer</legend>
-
               <div class="event__type-item">
-                <input id="event-type-taxi-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="taxi">
-                <label class="event__type-label  event__type-label--taxi"
-                for="event-type-taxi-1">Taxi</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-bus-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="bus">
-                <label class="event__type-label  event__type-label--bus"
-                for="event-type-bus-1">Bus</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-train-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="train">
-                <label class="event__type-label  event__type-label--train"
-                for="event-type-train-1">Train</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-ship-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="ship">
-                <label class="event__type-label  event__type-label--ship"
-                for="event-type-ship-1">Ship</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-transport-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="transport">
-                <label class="event__type-label  event__type-label--transport"
-                for="event-type-transport-1">Transport</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-drive-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="drive">
-                <label class="event__type-label  event__type-label--drive"
-                for="event-type-drive-1">Drive</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-flight-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="flight" checked>
-                <label class="event__type-label  event__type-label--flight"
-                for="event-type-flight-1">Flight</label>
-              </div>
-            </fieldset>
-
-            <fieldset class="event__type-group">
-              <legend class="visually-hidden">Activity</legend>
-
-              <div class="event__type-item">
-                <input id="event-type-check-in-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="check-in">
-                <label class="event__type-label  event__type-label--check-in"
-                for="event-type-check-in-1">Check-in</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-sightseeing-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="sightseeing">
-                <label class="event__type-label  event__type-label--sightseeing" f
-                or="event-type-sightseeing-1">Sightseeing</label>
-              </div>
-
-              <div class="event__type-item">
-                <input id="event-type-restaurant-1" class="event__type-input
-                visually-hidden" type="radio" name="event-type" value="restaurant">
-                <label class="event__type-label  event__type-label--restaurant"
-                for="event-type-restaurant-1">Restaurant</label>
-              </div>
-            </fieldset>
+                  <input id="event-type-taxi-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="taxi" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--taxi" for="event-type-taxi-1">Taxi</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-bus-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="bus" data-placeholder="to" checked>
+                  <label class="event__type-label  event__type-label--bus" for="event-type-bus-1">Bus</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-train-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="train" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--train" for="event-type-train-1">Train</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-ship-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="ship" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--ship" for="event-type-ship-1">Ship</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-transport-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="transport" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--transport" for="event-type-transport-1">Transport</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-drive-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="drive" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--drive" for="event-type-drive-1">Drive</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-flight-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="flight" data-placeholder="to">
+                  <label class="event__type-label  event__type-label--flight" for="event-type-flight-1">Flight</label>
+                </div>
+              </fieldset>
+              <fieldset class="event__type-group">
+                <legend class="visually-hidden">Activity</legend>
+                <div class="event__type-item">
+                  <input id="event-type-check-in-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="check-in" data-placeholder="in">
+                  <label class="event__type-label  event__type-label--check-in" for="event-type-check-in-1">Check-in</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-sightseeing-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="sightseeing" data-placeholder="in">
+                  <label class="event__type-label  event__type-label--sightseeing" for="event-type-sightseeing-1">Sightseeing</label>
+                </div>
+                <div class="event__type-item">
+                  <input id="event-type-restaurant-1" class="event__type-input  visually-hidden" type="radio" name="event-type" value="restaurant" data-placeholder="in">
+                  <label class="event__type-label  event__type-label--restaurant" for="event-type-restaurant-1">Restaurant</label>
+                </div>
+              </fieldset>
           </div>
         </div>
 
         <div class="event__field-group  event__field-group--destination">
           <label class="event__label  event__type-output" for="event-destination-1">
-            ${this._type}
+            ${transformFirstLetter(this._type)} ${TRANSPORT_TYPES.includes(this._type) ? `to` : `in`}
           </label>
           <input class="event__input  event__input--destination"
           id="event-destination-1" type="text" name="event-destination"
-          value="${this._city}" list="destination-list-1">
+          value="${this._city}" list="destination-list-1" onkeypress="return false">
           <datalist id="destination-list-1">
             ${this._destinations.map(({name}) => `<option value="${name}"></option>`).join(``)}
           </datalist>
@@ -130,14 +108,14 @@ export class EditCard extends AbstractComponent {
           </label>
           <input class="event__input  event__input--time"
           id="event-start-time-1" type="text" name="event-start-time"
-          value="${moment(this._dateStart).format(`DD/MM/YY HH:mm`)}">
+          value="${moment(this._dateStart).format(DateFormat.DATE_TIME)}">
           &mdash;
           <label class="visually-hidden" for="event-end-time-1">
             To
           </label>
           <input class="event__input  event__input--time"
           id="event-end-time-1" type="text" name="event-end-time"
-          value="${moment(this._dateFinish).format(`DD/MM/YY HH:mm`)}">
+          value="${moment(this._dateFinish).format(DateFormat.DATE_TIME)}">
         </div>
 
         <div class="event__field-group  event__field-group--price">
@@ -170,7 +148,7 @@ export class EditCard extends AbstractComponent {
 
       <section class="event__details">
 
-        <section class="event__section  event__section--offers">
+        <section class="event__section  event__section--offers ${this._additionalOptions.length > 0 ? `` : `visually-hidden`}"">
           <h3 class="event__section-title  event__section-title--offers">Offers</h3>
 
           <div class="event__available-offers">
@@ -182,13 +160,13 @@ export class EditCard extends AbstractComponent {
         <label class="event__offer-label" for="${title}-1">
           <span class="event__offer-title">${title}</span>
           &plus;
-          &euro;&nbsp;<span class="event__offer-price">${price}</span>
+          &euro;&nbsp;<span class="event__offer-price">${price.toString()}</span>
         </label>
       </div>`)).join(``)}
     </div>
         </section>
 
-        <section class="event__section  event__section--destination">
+        <section class="event__section  event__section--destination ${this._city ? `` : `visually-hidden`}">
           <h3 class="event__section-title  event__section-title--destination">Destination</h3>
           <p class="event__destination-description">${this._description}</p>
 
@@ -204,12 +182,89 @@ export class EditCard extends AbstractComponent {
   </li>`;
   }
 
+  _setCurrentTypeChecked() {
+    const foundElement = Array.from(this.getElement()
+        .querySelectorAll(`input[name="event-type"]`))
+        .find((eventType) => eventType.value === this._type);
+
+    if (foundElement) {
+      foundElement.checked = true;
+    }
+  }
+
   _subscribeOnEvents() {
     this.getElement()
       .querySelector(`.event__type-input`).addEventListener(`keydown`, (evt) => {
-        if (evt.key === `Enter`) {
+        if (evt.key === Key.ENTER) {
           evt.preventDefault();
         }
       });
   }
+
+  _setNumbersOnly() {
+    this.getElement()
+      .querySelector(`.event__input--price`)
+      .addEventListener(`input`, (evt) => {
+        evt.target.value = evt.target.value.replace(/[^\d]/g, ``);
+      });
+  }
+
+  _changeOptionsByType() {
+    this.getElement()
+      .querySelectorAll(`.event__type-input`)
+      .forEach((typeItem) => {
+        typeItem.addEventListener(`click`, (evt) => {
+          const target = evt.currentTarget;
+          const typeData = this._offersWithTypes.find(({type}) => type === target.value);
+
+          this.getElement().querySelector(`.event__type-icon`).src = `img/icons/${typeData.type}.png`;
+          this.getElement().querySelector(`.event__type-output`).textContent = `${transformFirstLetter(typeData.type)} ${TRANSPORT_TYPES.includes(typeData.type) ? `to` : `in`}`;
+          this.getElement().querySelector(`.event__type-toggle`).checked = false;
+
+          this.getElement().querySelector(`.event__available-offers`).innerHTML = ``;
+
+          if (typeData.offers.length === 0) {
+            this.getElement().querySelector(`.event__section--offers`).classList.add(`visually-hidden`);
+            return;
+          } else {
+            this.getElement().querySelector(`.event__section--offers`).classList.remove(`visually-hidden`);
+          }
+
+          this.getElement().querySelector(`.event__available-offers`).insertAdjacentHTML(`beforeend`,
+              `${typeData.offers.map(({name, price}) => `<div class="event__offer-selector">
+                <input class="event__offer-checkbox  visually-hidden" id="${name}-1" type="checkbox" name="${name}">
+                <label class="event__offer-label" for="${name}-1">
+                  <span class="event__offer-title">${name}</span>
+                  &plus;
+                  &euro;&nbsp;<span class="event__offer-price">${price}</span>
+                </label>
+              </div>`).join(``)}`);
+        });
+      });
+  }
+
+  _changeDescByCity() {
+    this.getElement()
+      .querySelector(`.event__input--destination`)
+      .addEventListener(`change`, (evt) => {
+        const target = evt.currentTarget;
+        const destinationImages = this.getElement().querySelector(`.event__photos-tape`);
+        const destinationDescription = this.getElement().querySelector(`.event__destination-description`);
+        const destinationContainer = this.getElement().querySelector(`.event__section--destination`);
+        const cityData = this._destinations.find(({name}) => name === target.value);
+
+        destinationImages.innerHTML = ``;
+
+        if (cityData) {
+          destinationDescription.textContent = cityData.description;
+          destinationContainer.classList.remove(`visually-hidden`);
+          destinationImages.insertAdjacentHTML(`beforeend`, cityData.pictures.map(({src, description}) => `<img class="event__photo" src="${src}" alt="${description}">`).join(``));
+        } else {
+          destinationDescription.textContent = ``;
+          destinationContainer.classList.add(`visually-hidden`);
+        }
+      });
+  }
 }
+
+export default EditCard;
