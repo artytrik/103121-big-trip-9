@@ -4,12 +4,12 @@ import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES} from '../utils.j
 
 class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
-    dateStart, dateFinish, price, additionalOptions, isFavourite, id}, destinations, transportTypes, placeTypes, offersWithTypes) {
+    dateStart, dateFinish, basePrice, additionalOptions, isFavourite, id}, destinations, transportTypes, placeTypes, offersWithTypes) {
     super();
     this._type = type;
     this._dateStart = new Date(dateStart);
     this._dateFinish = new Date(dateFinish);
-    this._price = price;
+    this._price = basePrice;
     this._additionalOptions = additionalOptions;
     this._city = name;
     this._description = description;

@@ -103,7 +103,7 @@ class Statistics extends AbstractComponent {
     const moneyLabels = [...new Set(this._points.map(({type}) => type))];
     const moneyData = moneyLabels.reduce((acc, label) => {
       const pointsByLabel = this._points.filter(({type}) => type === label);
-      const labelPrice = pointsByLabel.reduce((sum, {price}) => sum + Number(price), 0);
+      const labelPrice = pointsByLabel.reduce((sum, {basePrice}) => sum + Number(basePrice), 0);
       acc.push(labelPrice);
       return acc;
     }, []);

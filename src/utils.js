@@ -36,7 +36,7 @@ export const FilterType = {
   EVERYTHING: `filter-everything`,
   FUTURE: `filter-future`,
   PAST: `filter-past`,
-}
+};
 
 export const ActionType = {
   DELETE: `delete`,
@@ -76,10 +76,10 @@ export const unrender = (element) => {
 };
 
 export const getTripCost = (points) => (
-  points.reduce((acc, {price, additionalOptions}) => {
+  points.reduce((acc, {basePrice, additionalOptions}) => {
     const additionalOptionsCost = additionalOptions.reduce((accc, {price, accepted}) =>
       (accepted ? accc + Number(price) : price), 0);
-    return acc + Number(price) + additionalOptionsCost;
+    return acc + Number(basePrice) + additionalOptionsCost;
   }, 0)
 );
 
@@ -88,8 +88,8 @@ export const getInformation = (points) => {
     cities: points.map(({destination: {name}}) => name),
     dateStart: points[0].dateStart,
     dateFinish: points[points.length - 1].dateFinish
-  }
-}
+  };
+};
 
 export const transformFirstLetter = (string) => `${string[0].toUpperCase()}${string.substring(1)}`;
 

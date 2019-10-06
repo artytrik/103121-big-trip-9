@@ -3,13 +3,13 @@ import moment from 'moment';
 import {DateFormat, transformFirstLetter, getTimeDifference, TRANSPORT_TYPES} from '../utils.js';
 
 class Card extends AbstractComponent {
-  constructor({type, destination: {name}, dateStart, dateFinish, price, additionalOptions, id}) {
+  constructor({type, destination: {name}, dateStart, dateFinish, basePrice, additionalOptions, id}) {
     super();
     this._type = type;
     this._city = name;
     this._dateStart = new Date(dateStart);
     this._dateFinish = new Date(dateFinish);
-    this._price = price;
+    this._price = basePrice;
     this._additionalOptions = additionalOptions;
     this._id = id;
   }
