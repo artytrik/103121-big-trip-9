@@ -69,7 +69,7 @@ class API {
       .then(checkStatus)
       .catch((err) => {
         throw err;
-    });
+      });
   }
 }
 
