@@ -33,7 +33,7 @@ class TripController {
     if (this._points.length > 0) {
       this._renderDays(this._points);
     } else {
-      render(this._container.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
+      render(this._container, this._emptyResult.getElement(), Position.BEFOREEND);
     }
 
 
@@ -100,31 +100,22 @@ class TripController {
 
   _renderDays(points) {
     const sortedPoints = points.slice().sort((a, b) => a.dateStart - b.dateStart);
-    const pointsByDate = new Map();
-    sortedPoints.forEach((point) => {
-      if (!pointsByDate.has(point.dateStart)) {
-        pointsByDate.set(point.dateStart, []);
-      }
-      const arr = pointsByDate.get(point.dateStart);
-      arr.push(point);
-      pointsByDate.set(point.dateStart, arr);
-    });
+    const sortedDates = sortedPoints.map(({dateStart}) => dateStart);
+    const formattedDates = sortedDates.map((date) => moment(date).format(`MMM DD`));
+    const uniqueDates = [...new Set(formattedDates)];
 
-    let i = 1;
-
-    pointsByDate.forEach((pointByDate, date) => {
-      const objDate = new Date(date);
+    uniqueDates.forEach((pointDate, i) => {
+      i++;
       const day = new Day();
-      const dayInformation = new DayInformation(objDate, i);
+      const dayInformation = new DayInformation(new Date(pointDate), i);
       const cardsContainer = new CardsContainer();
+      const pointsForOneDay = points.filter(({dateStart}) => moment(dateStart).format(`MMM DD`) === pointDate);
 
       render(this._tripContainer.getElement(), day.getElement(), Position.BEFOREEND);
       render(day.getElement(), dayInformation.getElement(), Position.BEFOREEND);
       render(day.getElement(), cardsContainer.getElement(), Position.BEFOREEND);
 
-      pointByDate.forEach((point) => this._renderPoints(cardsContainer, point));
-
-      i++;
+      pointsForOneDay.forEach((point) => this._renderPoints(cardsContainer, point));
     });
   }
 

@@ -1,6 +1,6 @@
 import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
-import {DateFormat, Key, transformFirstLetter, TRANSPORT_TYPES} from '../utils.js';
+import {DateFormat, transformFirstLetter, TRANSPORT_TYPES, Position} from '../utils.js';
 
 class EditCard extends AbstractComponent {
   constructor({type, destination: {name, description, pictures},
@@ -192,15 +192,6 @@ class EditCard extends AbstractComponent {
     }
   }
 
-  _subscribeOnEvents() {
-    this.getElement()
-      .querySelector(`.event__type-input`).addEventListener(`keydown`, (evt) => {
-        if (evt.key === Key.ENTER) {
-          evt.preventDefault();
-        }
-      });
-  }
-
   _setNumbersOnly() {
     this.getElement()
       .querySelector(`.event__input--price`)
@@ -264,6 +255,40 @@ class EditCard extends AbstractComponent {
           destinationContainer.classList.add(`visually-hidden`);
         }
       });
+  }
+
+  resetForm() {
+    this.getElement().querySelector(`.event--edit`).reset();
+    this.getElement().querySelector(`.event__type-icon`).src = `img/icons/${this._type}.png`;
+    this.getElement().querySelector(`.event__type-output`).textContent =
+        `${transformFirstLetter(this._type)} ${TRANSPORT_TYPES.includes(this._type) ? `to` : `in`}`;
+    this.getElement().querySelector(`.event__destination-description`).textContent = `${this._description}`;
+    this.getElement().querySelector(`.event__favorite-checkbox`).checked = this._isFavourite;
+    this.getElement().querySelector(`.event--edit`).style.boxShadow = ``;
+    this._setCurrentTypeChecked();
+
+    this.getElement().querySelector(`.event__photos-tape`).innerHTML = ``;
+    this.getElement().querySelector(`.event__section--destination`).classList.remove(`visually-hidden`);
+    this.getElement().querySelector(`.event__photos-tape`).insertAdjacentHTML(Position.BEFOREEND, this._pictures.map(({src, description}) =>
+        `<img class="event__photo" src="${src}" alt="${description}">`).join(``));
+
+    if (this._additionalOptions.length > 0) {
+      this.getElement().querySelector(`.event__section--offers`).classList.remove(`visually-hidden`);
+      this.getElement().querySelector(`.event__available-offers`).innerHTML = ``;
+      this.getElement().querySelector(`.event__available-offers`).insertAdjacentHTML(Position.BEFOREEND, `   ${this._additionalOptions.map(({title, price, accepted}) =>
+      (`<div class="event__offer-selector">
+        <input class="event__offer-checkbox  visually-hidden"
+        id="${title}-1" type="checkbox"
+        name="${title}" ${accepted ? `checked` : ``}>
+          <label class="event__offer-label" for="${title}-1">
+            <span class="event__offer-title">${title}</span>
+            &plus;
+            &euro;&nbsp;<span class="event__offer-price">${price.toString()}</span>
+          </label>
+        </div>`)).join(``)}`);
+    } else if (!this.getElement().querySelector(`.event__section--offers`).classList.contains(`visually-hidden`)) {
+      this.getElement().querySelector(`.event__section--offers`).classList.add(`visually-hidden`);
+    }
   }
 }
 

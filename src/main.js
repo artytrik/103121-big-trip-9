@@ -1,10 +1,11 @@
 import Menu from './components/menu.js';
 import Information from './components/information.js';
 import Filters from './components/filters.js';
-import {render, Position, getTripCost, ActionType, getInformation} from './utils.js';
+import {render, unrender, Position, getTripCost, ActionType, getInformation} from './utils.js';
 import TripController from './controllers/trip.js';
 import Statistics from './components/statistics.js';
 import API from './api.js';
+import Loading from "./components/loading.js";
 
 const FILTER_TABS = [`everything`, `future`, `past`];
 const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
@@ -30,11 +31,13 @@ const filtersElement = new Filters(FILTER_TABS);
 const menuElement = new Menu();
 const statistics = new Statistics();
 const api = new API({endPoint: END_POINT, authorization: AUTHORIZATION});
+const loading = new Loading();
 statistics.getElement().classList.add(`visually-hidden`);
 
 render(tripControlsHeaderElements[0], menuElement.getElement(), Position.AFTEREND);
 render(tripControlsHeaderElements[1], filtersElement.getElement(), Position.AFTEREND);
 render(pageBodyContainer, statistics.getElement(), Position.BEFOREEND);
+render(tripEventsElement, loading.getElement(), Position.BEFOREEND);
 
 const onDataChange = (actionType, update, onError) => {
   switch (actionType) {
@@ -99,6 +102,8 @@ api.getData({url: `destinations`})
     information = new Information(pointsInformation);
   })
   .then(() => {
+    unrender(loading.getElement());
+    loading.removeElement();
     tripController.init();
     render(tripInformationElement, information.getElement(), Position.AFTERBEGIN);
     tripCostValue.textContent = getTripCost(pointsData);

@@ -2,6 +2,7 @@ import AbstractComponent from './abstract-component.js';
 import moment from 'moment';
 import {DateFormat, transformFirstLetter, getTimeDifference, TRANSPORT_TYPES} from '../utils.js';
 
+const ADDITIONAL_OPTIONS_COUNT = 3;
 class Card extends AbstractComponent {
   constructor({type, destination: {name}, dateStart, dateFinish, basePrice, additionalOptions, id}) {
     super();
@@ -49,7 +50,7 @@ class Card extends AbstractComponent {
       <span class="event__offer-title">${title}</span>
       &plus;
       &euro;&nbsp;<span class="event__offer-price">${price}</span>
-    </li>`).join(``)}
+    </li>`).slice(0, ADDITIONAL_OPTIONS_COUNT).join(``)}
       </ul>
 
       <button class="event__rollup-btn" type="button">

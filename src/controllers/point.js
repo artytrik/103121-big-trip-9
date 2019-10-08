@@ -16,6 +16,7 @@ class PointController {
     this._pointView = new Card(data);
     this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES, additionalOptions);
     this.init(mode);
+    this.setDefaultView();
   }
 
   init(mode) {
@@ -31,9 +32,10 @@ class PointController {
 
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE_IE || evt.key === Key.ESCAPE) {
-        if (this._pointEdit.getElement().parentElement === this._container) {
-          this._container.replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
-        }
+      if (this._pointEdit.getElement().parentNode === this._container.getElement()) {
+        this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+        this._pointEdit.resetForm();
+      }
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
@@ -41,7 +43,7 @@ class PointController {
     flatpickr(this._pointEdit.getElement().querySelector(`#event-start-time-1`), {
       allowInput: false,
       defaultDate: moment(this._data.dateStart).format(DateFormat.DATE_TIME),
-      dateFormat: `d/m/y H:i`,
+      dateFormat: DateFormat.DATE_TIME_FLATPICKR,
       enableTime: true,
       [`time_24hr`]: true
     });
@@ -57,6 +59,8 @@ class PointController {
     this._pointView.getElement()
       .querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, () => {
+        this._onChangeView();
+
         this._container.getElement().replaceChild(this._pointEdit.getElement(), this._pointView.getElement());
         document.addEventListener(`keydown`, onEscKeyDown);
       });
@@ -64,11 +68,13 @@ class PointController {
     this._pointEdit.getElement()
       .querySelector(`.event__rollup-btn`)
       .addEventListener(`click`, () => {
+
         if (mode === Mode.ADDING) {
           unrender(this._pointEdit.getElement());
           this._pointEdit.removeElement();
           this._onDataChange(null, null);
         } else if (mode === Mode.DEFAULT) {
+          this._pointEdit.resetForm();
           this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
           document.removeEventListener(`keydown`, onEscKeyDown);
         }
@@ -81,7 +87,7 @@ class PointController {
 
         const entry = this._getNewData();
 
-        this.block(`save`, true);
+        this.block(`save`, true, mode);
         setTimeout(this._onDataChange.bind(this,
             mode === Mode.DEFAULT ? `update` : `create`,
             entry,
@@ -97,7 +103,7 @@ class PointController {
       .addEventListener(`click`, (evt) => {
         evt.preventDefault();
 
-        this.block(`delete`, true);
+        this.block(`delete`, true, mode);
 
         if (mode === Mode.ADDING) {
           unrender(this._pointEdit.getElement());
@@ -165,7 +171,7 @@ class PointController {
     }, ANIMATION_TIMEOUT);
   }
 
-  block(buttonValue, isDisabled) {
+  block(buttonValue, isDisabled, mode) {
     const saveButton = this._pointEdit.getElement().querySelector(`.event__save-btn`);
     const deleteButton = this._pointEdit.getElement().querySelector(`.event__reset-btn`);
 
@@ -193,7 +199,11 @@ class PointController {
       }
     } else {
       saveButton.textContent = `Save`;
-      deleteButton.textContent = `Delete`;
+      if (mode === Mode.ADDING) {
+        deleteButton.textContent = `Cancel`;
+      } else if (mode === Mode.DEFAULT) {
+        deleteButton.textContent = `Delete`;
+      }
     }
   }
 
@@ -208,6 +218,7 @@ class PointController {
     if (this._container.getElement().contains(this._pointEdit.getElement())) {
       this._container.getElement().replaceChild(this._pointView.getElement(),
           this._pointEdit.getElement());
+      this._pointEdit.resetForm();
     }
   }
 }

@@ -16,8 +16,8 @@ export const DateFormat = {
   YEAR_MONTH_DAY: `YYYY-MM-DD`,
   MONTH_DAY: `MMM DD`,
   DAY_MONTH: `DD MMM`,
-  DATE_TIME: `DD/MM/YY HH:mm`,
-  DATE_TIME_FLATPICKR: `d/m/y H:i`,
+  DATE_TIME: `DD.MM.YYYY HH:mm`,
+  DATE_TIME_FLATPICKR: `d.m.Y H:i`,
 };
 
 export const Key = {
@@ -78,7 +78,7 @@ export const unrender = (element) => {
 export const getTripCost = (points) => (
   points.reduce((acc, {basePrice, additionalOptions}) => {
     const additionalOptionsCost = additionalOptions.reduce((accc, {price, accepted}) =>
-      (accepted ? accc + Number(price) : price), 0);
+      (accepted ? accc + Number(price) : accc), 0);
     return acc + Number(basePrice) + additionalOptionsCost;
   }, 0)
 );
