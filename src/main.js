@@ -47,6 +47,7 @@ const onDataChange = (actionType, update, onError) => {
       })
         .then(() => api.getPoints())
         .then((points) => {
+          pointsData = points;
           tripController.show(points);
           tripController.updateData(points);
         })
@@ -61,6 +62,7 @@ const onDataChange = (actionType, update, onError) => {
       })
       .then(() => api.getPoints())
       .then((points) => {
+        pointsData = points;
         tripController.show(points);
         tripController.updateData(points);
       })
@@ -74,6 +76,7 @@ const onDataChange = (actionType, update, onError) => {
       })
       .then(() => api.getPoints())
       .then((points) => {
+        pointsData = points;
         tripController.show(points);
         tripController.updateData(points);
       })

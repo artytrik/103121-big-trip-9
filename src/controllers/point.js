@@ -16,7 +16,6 @@ class PointController {
     this._pointView = new Card(data);
     this._pointEdit = new EditCard(data, destinations, TRANSPORT_TYPES, PLACE_TYPES, additionalOptions);
     this.init(mode);
-    this.setDefaultView();
   }
 
   init(mode) {

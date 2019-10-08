@@ -33,6 +33,7 @@ class Statistics extends AbstractComponent {
 
   hide() {
     this.getElement().classList.add(`visually-hidden`);
+    this._clearStat(this._moneyStat, this._transportStat, this._timeSpendStat);
   }
 
   show(points) {
@@ -107,8 +108,7 @@ class Statistics extends AbstractComponent {
       acc.push(labelPrice);
       return acc;
     }, []);
-
-    this._renderStat(`MONEY`, this._moneyCtx, moneyLabels, moneyData);
+    this._moneyStat = this._renderStat(`MONEY`, this._moneyCtx, moneyLabels, moneyData);
   }
 
   _renderTransportStat() {
@@ -120,7 +120,7 @@ class Statistics extends AbstractComponent {
       return acc;
     }, []);
 
-    this._renderStat(`TRANSPORT`, this._transportCtx, transportLabels, transportData);
+    this._transportStat = this._renderStat(`TRANSPORT`, this._transportCtx, transportLabels, transportData);
   }
 
   _renderTimeSpendStat() {
@@ -134,7 +134,15 @@ class Statistics extends AbstractComponent {
       return acc;
     }, []);
 
-    this._renderStat(`TIME SPEND`, this._timeSpendCtx, timeSpendLabels, timeSpendData);
+    this._timeSpendStat = this._renderStat(`TIME SPEND`, this._timeSpendCtx, timeSpendLabels, timeSpendData);
+  }
+
+  _clearStat(...stats) {
+    stats.forEach((stat) => {
+      if (stat) {
+        stat.destroy();
+      }
+    });
   }
 }
 
