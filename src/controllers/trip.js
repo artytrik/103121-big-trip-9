@@ -30,12 +30,13 @@ class TripController {
     render(this._container, this._sort.getElement(), Position.BEFOREEND);
     render(this._container, this._tripContainer.getElement(), Position.BEFOREEND);
 
-    if (this._points.length > 0) {
-      this._renderDays(this._points);
-    } else {
+    if (this._points.length === 0) {
       render(this._container, this._emptyResult.getElement(), Position.BEFOREEND);
+
+      return;
     }
 
+    this._renderDays(this._points);
 
     this._sort.getElement()
       .addEventListener(`change`, (evt) => this._onSortLinkClick(evt));
@@ -87,6 +88,10 @@ class TripController {
     unrender(this._tripContainer.getElement());
 
     this._tripContainer.removeElement();
+    const eventSortElement = this._sort.getElement().querySelector(`.trip-sort__item--event`)
+    const everythingFilterElement = document.querySelector(`#filter-everything`);
+    eventSortElement.querySelector(`.trip-sort__input`).checked = true;
+    everythingFilterElement.checked = true;
     this._subscriptions.length = 0;
     render(this._container, this._tripContainer.getElement(), Position.BEFOREEND);
     this._renderDays(this._points);

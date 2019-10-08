@@ -7,6 +7,7 @@ import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
 const DELAY = 1000;
+const ANIMATION_TIMEOUT = 600;
 class PointController {
   constructor(container, data, mode, onDataChange, onChangeView, destinations, additionalOptions) {
     this._container = container;
@@ -162,7 +163,6 @@ class PointController {
   }
 
   shake() {
-    const ANIMATION_TIMEOUT = 600;
     this._pointEdit.getElement().style.animation = `shake ${ANIMATION_TIMEOUT / 1000}s`;
 
     setTimeout(() => {
