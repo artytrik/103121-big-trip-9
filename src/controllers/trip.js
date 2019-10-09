@@ -88,7 +88,7 @@ class TripController {
     unrender(this._tripContainer.getElement());
 
     this._tripContainer.removeElement();
-    const eventSortElement = this._sort.getElement().querySelector(`.trip-sort__item--event`)
+    const eventSortElement = this._sort.getElement().querySelector(`.trip-sort__item--event`);
     const everythingFilterElement = document.querySelector(`#filter-everything`);
     eventSortElement.querySelector(`.trip-sort__input`).checked = true;
     everythingFilterElement.checked = true;

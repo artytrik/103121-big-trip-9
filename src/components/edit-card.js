@@ -270,13 +270,13 @@ class EditCard extends AbstractComponent {
     this.getElement().querySelector(`.event__photos-tape`).innerHTML = ``;
     this.getElement().querySelector(`.event__section--destination`).classList.remove(`visually-hidden`);
     this.getElement().querySelector(`.event__photos-tape`).insertAdjacentHTML(Position.BEFOREEND, this._pictures.map(({src, description}) =>
-        `<img class="event__photo" src="${src}" alt="${description}">`).join(``));
+      `<img class="event__photo" src="${src}" alt="${description}">`).join(``));
 
     if (this._additionalOptions.length > 0) {
       this.getElement().querySelector(`.event__section--offers`).classList.remove(`visually-hidden`);
       this.getElement().querySelector(`.event__available-offers`).innerHTML = ``;
       this.getElement().querySelector(`.event__available-offers`).insertAdjacentHTML(Position.BEFOREEND, `   ${this._additionalOptions.map(({title, price, accepted}) =>
-      (`<div class="event__offer-selector">
+        (`<div class="event__offer-selector">
         <input class="event__offer-checkbox  visually-hidden"
         id="${title}-1" type="checkbox"
         name="${title}" ${accepted ? `checked` : ``}>

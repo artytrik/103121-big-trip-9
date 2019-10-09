@@ -32,10 +32,10 @@ class PointController {
 
     const onEscKeyDown = (evt) => {
       if (evt.key === Key.ESCAPE_IE || evt.key === Key.ESCAPE) {
-      if (this._pointEdit.getElement().parentNode === this._container.getElement()) {
-        this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
-        this._pointEdit.resetForm();
-      }
+        if (this._pointEdit.getElement().parentNode === this._container.getElement()) {
+          this._container.getElement().replaceChild(this._pointView.getElement(), this._pointEdit.getElement());
+          this._pointEdit.resetForm();
+        }
         document.removeEventListener(`keydown`, onEscKeyDown);
       }
     };
