@@ -103,8 +103,12 @@ class Statistics extends AbstractComponent {
   _renderMoneyStat() {
     const moneyLabels = [...new Set(this._points.map(({type}) => type))];
     const moneyData = moneyLabels.reduce((acc, label) => {
-      const pointsByLabel = this._points.filter(({type}) => type === label);
-      const labelPrice = pointsByLabel.reduce((sum, {basePrice}) => sum + Number(basePrice), 0);
+      const labelPrice = this._points.reduce((sum, {basePrice, type}) => {
+        if (type === label) {
+          sum += Number(basePrice)
+        }
+        return sum;
+      }, 0);
       acc.push(labelPrice);
       return acc;
     }, []);
@@ -126,9 +130,12 @@ class Statistics extends AbstractComponent {
   _renderTimeSpendStat() {
     const timeSpendLabels = [...new Set(this._points.map(({type}) => type))];
     const timeSpendData = timeSpendLabels.reduce((acc, label) => {
-      const pointsByLabel = this._points.filter(({type}) => type === label);
-      const labelTime = pointsByLabel.reduce((sum, {dateStart, dateFinish}) =>
-        sum + (dateFinish - dateStart), 0);
+      const labelTime = this._points.reduce((sum, {dateStart, dateFinish, type}) => {
+        if (type === label) {
+          sum += (dateFinish - dateStart)
+        }
+        return sum;
+      }, 0);
       const hoursCount = Math.floor(moment.duration(labelTime).asHours());
       acc.push(hoursCount);
       return acc;
