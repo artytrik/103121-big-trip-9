@@ -105,7 +105,7 @@ class Statistics extends AbstractComponent {
     const moneyData = moneyLabels.reduce((acc, label) => {
       const labelPrice = this._points.reduce((sum, {basePrice, type}) => {
         if (type === label) {
-          sum += Number(basePrice)
+          sum += Number(basePrice);
         }
         return sum;
       }, 0);
@@ -132,7 +132,7 @@ class Statistics extends AbstractComponent {
     const timeSpendData = timeSpendLabels.reduce((acc, label) => {
       const labelTime = this._points.reduce((sum, {dateStart, dateFinish, type}) => {
         if (type === label) {
-          sum += (dateFinish - dateStart)
+          sum += (dateFinish - dateStart);
         }
         return sum;
       }, 0);
