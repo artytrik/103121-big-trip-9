@@ -6,7 +6,7 @@ import flatpickr from 'flatpickr';
 import 'flatpickr/dist/flatpickr.min.css';
 import 'flatpickr/dist/themes/light.css';
 
-const DELAY = 1000;
+const DELAY = 1;
 const ANIMATION_TIMEOUT = 600;
 class PointController {
   constructor(container, data, mode, onDataChange, onChangeView, destinations, additionalOptions) {
@@ -92,7 +92,7 @@ class PointController {
             mode === Mode.DEFAULT ? `update` : `create`,
             entry,
             () => {
-              this.onError();
+              this.onErrorDataChange();
             }),
         DELAY);
 
@@ -206,7 +206,7 @@ class PointController {
     }
   }
 
-  onError() {
+  onErrorDataChange() {
     this.shake();
     this.block(null, false);
     this._pointEdit.getElement().querySelector(`.event--edit`).style.border = `3px solid red`;

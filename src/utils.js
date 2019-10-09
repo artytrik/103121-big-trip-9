@@ -83,13 +83,17 @@ export const getTripCost = (points) => (
   }, 0)
 );
 
-export const getInformation = (points) => {
-  return {
+export const getInformation = (points) =>
+  points.length > 0 ?
+  ({
     cities: points.map(({destination: {name}}) => name),
     dateStart: points[0].dateStart,
     dateFinish: points[points.length - 1].dateFinish
-  };
-};
+  }) : ({
+    cities: [],
+    dateStart: {},
+    dateFinish: {}
+  });
 
 export const transformFirstLetter = (string) => `${string[0].toUpperCase()}${string.substring(1)}`;
 

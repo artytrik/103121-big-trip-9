@@ -31,9 +31,7 @@ class TripController {
     render(this._container, this._tripContainer.getElement(), Position.BEFOREEND);
 
     if (this._points.length === 0) {
-      render(this._container, this._emptyResult.getElement(), Position.BEFOREEND);
-
-      return;
+      render(this._tripContainer.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
     }
 
     this._renderDays(this._points);
@@ -86,7 +84,6 @@ class TripController {
 
   _renderBoard() {
     unrender(this._tripContainer.getElement());
-
     this._tripContainer.removeElement();
     const eventSortElement = this._sort.getElement().querySelector(`.trip-sort__item--event`);
     const everythingFilterElement = document.querySelector(`#filter-everything`);
@@ -94,6 +91,9 @@ class TripController {
     everythingFilterElement.checked = true;
     this._subscriptions.length = 0;
     render(this._container, this._tripContainer.getElement(), Position.BEFOREEND);
+    if (this._points.length === 0) {
+      render(this._tripContainer.getElement(), this._emptyResult.getElement(), Position.BEFOREEND);
+    }
     this._renderDays(this._points);
   }
 
