@@ -85,15 +85,15 @@ export const getTripCost = (points) => (
 
 export const getInformation = (points) =>
   points.length > 0 ?
-  ({
-    cities: points.map(({destination: {name}}) => name),
-    dateStart: points[0].dateStart,
-    dateFinish: points[points.length - 1].dateFinish
-  }) : ({
-    cities: [],
-    dateStart: {},
-    dateFinish: {}
-  });
+    ({
+      cities: points.map(({destination: {name}}) => name),
+      dateStart: points[0].dateStart,
+      dateFinish: points[points.length - 1].dateFinish
+    }) : ({
+      cities: [],
+      dateStart: {},
+      dateFinish: {}
+    });
 
 export const transformFirstLetter = (string) => `${string[0].toUpperCase()}${string.substring(1)}`;
 
