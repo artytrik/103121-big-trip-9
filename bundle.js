@@ -25546,7 +25546,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const FILTER_TABS = [`everything`, `future`, `past`];
 const AUTHORIZATION = `Basic eo0w590ik29889a=${Math.random()}`;
-const END_POINT = `https://htmlacademy-es-9.appspot.com/big-trip/`;
+const END_POINT = `https://16.ecmascript.pages.academy/big-trip/`;
 
 const tripMainElement = document.querySelector(`.trip-main`);
 const tripInformationElement = tripMainElement.querySelector(`.trip-info`);
